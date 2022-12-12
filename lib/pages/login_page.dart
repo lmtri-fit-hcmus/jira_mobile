@@ -16,18 +16,27 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   List<AccountInfo> listAccInf = [];
   fetchAccount() {
-    NetworkRequest.fetchAccoutInfo().then((dataFromServer) {
-      setState(() {
-        listAccInf = dataFromServer;
-      });
-      print('FetchSuccess');
-    });
-  }
+      try{
+      Future<List<AccountInfo>> res = NetworkRequest.fetchAccoutInfo();
+      res.then((dataFromServer) {
+          setState(() {
+            listAccInf = dataFromServer;
+          });
+          
+        });
+      }
+      catch(Exception){
+        print(1111111);
+      }
+
+
+    }
+    
+  
 
   @override
   void initState() {
     super.initState();
-    print("init");
     setState(() {
       fetchAccount();
     });
@@ -47,7 +56,6 @@ class _LoginPageState extends State<LoginPage> {
     String invalidUsername = "Inavailable username!";
     String invalidPassword = "Password is not correct!";
     void onFetch() {
-      print('Go to on fetch');
       setState(() {
         fetchAccount();
       });
@@ -94,7 +102,6 @@ class _LoginPageState extends State<LoginPage> {
                                 onChanged: (value) {
                                   setState(() {
                                     userName = value;
-                                    print('user$userName');
                                   });
                                 },
                                 decoration: InputDecoration(
@@ -110,7 +117,6 @@ class _LoginPageState extends State<LoginPage> {
                                 onChanged: (value) {
                                   setState(() {
                                     password = value;
-                                    print('pass$password');
                                   });
                                 },
                                 decoration: InputDecoration(
@@ -147,6 +153,7 @@ class _LoginPageState extends State<LoginPage> {
                                 setState(() {
                                   errStr = invalidPassword;
                                 });
+                                break;
                               }
                             }
                           }

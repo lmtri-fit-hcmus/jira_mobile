@@ -17,12 +17,13 @@ class _SignupPageState extends State<SignupPage> {
   String _password = "";
   String _reEnterPassword = "";
   bool isMatch = true;
+  bool isValid = true;
   List<AccountInfo> listAccInf = [];
+  String currentState = "";
 
   @override
   Widget build(BuildContext context) {
-    bool checkValidAccount(String useName, String pass, String rePass) {
-      if (pass != rePass) return false;
+    bool checkValidAccount(String useName, String pass) {
       setState(() {
         listAccInf = widget.list;
       });
@@ -34,7 +35,8 @@ class _SignupPageState extends State<SignupPage> {
       }
       return true;
     }
-
+    String notMatch = "re-enter password is not matched!";
+    String userNotValid = "Username is taken by another!";
     return Scaffold(
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
@@ -124,9 +126,9 @@ class _SignupPageState extends State<SignupPage> {
                       Container(
                           padding: const EdgeInsets.only(top: 10, left: 10),
                           alignment: Alignment.centerLeft,
-                          child: Text('re-enter password is not matched!',
+                          child: Text(currentState,
                               style: TextStyle(
-                                  color: isMatch ? Colors.white : Colors.red))),
+                                  color: isMatch && isValid ? Colors.white : Colors.red))),
                       Container(
                         padding: const EdgeInsets.only(bottom: 20, top: 20),
                         width: 200,
@@ -136,21 +138,30 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                       InkWell(
                         onTap: () {
-                          if (checkValidAccount(
-                              _userName, _password, _reEnterPassword)) {
-                            print("No home go mom");
+                          // 
+                          if (_password == _reEnterPassword){
                             setState(() {
                               isMatch = true;
                             });
-                            print('{$_password} match');
+                            if(checkValidAccount(
+                              _userName, _password)) {
                             NetworkRequest.sendAccountInfor(
-                                _userName, _password, _userName);
-                            //Future.delayed(Duration(seconds: 1));
-                            widget.onFet();
-                            Navigator.pop(context);
-                          } else {
+                                _userName, _password, _userName).then((value) {
+                                  widget.onFet();
+                                  Navigator.pop(context);
+                                });
+                              }
+                            else{
+                              setState(() {
+                                currentState = userNotValid;
+                                isValid = false;
+                              });
+                            }
+                          }
+                          else {
                             setState(() {
                               isMatch = false;
+                              currentState = notMatch;
                             });
                             print('Not Match');
                           }
