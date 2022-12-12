@@ -16,7 +16,6 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   List<AccountInfo> listAccInf = [];
   fetchAccount() {
-      try{
       Future<List<AccountInfo>> res = NetworkRequest.fetchAccoutInfo();
       res.then((dataFromServer) {
           setState(() {
@@ -24,15 +23,7 @@ class _LoginPageState extends State<LoginPage> {
           });
           
         });
-      }
-      catch(Exception){
-        print(1111111);
-      }
-
-
     }
-    
-  
 
   @override
   void initState() {
