@@ -47,7 +47,7 @@ class _SignupPageState extends State<SignupPage> {
                   height: 250,
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                          image: AssetImage('assets/images/background.png'),
+                          image: AssetImage('assets/images/entry/background.png'),
                           fit: BoxFit.fill)),
                 ),
                 Padding(
