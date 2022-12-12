@@ -15,13 +15,21 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   List<AccountInfo> listAccInf = [];
-  @override
-  void initState() {
-    super.initState();
+  fetchAccount() {
     NetworkRequest.fetchAccoutInfo().then((dataFromServer) {
       setState(() {
         listAccInf = dataFromServer;
       });
+      print('FetchSuccess');
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    print("init");
+    setState(() {
+      fetchAccount();
     });
   }
 
@@ -38,10 +46,14 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     String invalidUsername = "Inavailable username!";
     String invalidPassword = "Password is not correct!";
-    print(listAccInf.length);
-    for (AccountInfo i in listAccInf) {
-      print(i.userName);
+    void onFetch() {
+      print('Go to on fetch');
+      setState(() {
+        fetchAccount();
+      });
+      print(listAccInf.length);
     }
+
     return Scaffold(
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
@@ -82,6 +94,7 @@ class _LoginPageState extends State<LoginPage> {
                                 onChanged: (value) {
                                   setState(() {
                                     userName = value;
+                                    print('user$userName');
                                   });
                                 },
                                 decoration: InputDecoration(
@@ -97,6 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                                 onChanged: (value) {
                                   setState(() {
                                     password = value;
+                                    print('pass$password');
                                   });
                                 },
                                 decoration: InputDecoration(
@@ -179,7 +193,10 @@ class _LoginPageState extends State<LoginPage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => SignupPage()));
+                                  builder: (context) => SignupPage(
+                                        onFet: onFetch,
+                                        list: listAccInf,
+                                      )));
                         },
                         child: Container(
                           padding: const EdgeInsets.only(top: 5),

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:jira_mobile/models/account_info.dart';
 import 'package:jira_mobile/networks/account_request.dart';
 import 'package:password_text_field/password_text_field.dart';
-import 'package:password_validated_field/password_validated_field.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../values/share_keys.dart';
 
 class SignupPage extends StatefulWidget {
-  const SignupPage({super.key});
+  final void Function() onFet;
+  final List<AccountInfo> list;
+  const SignupPage({super.key, required this.onFet, required this.list});
 
   @override
   State<SignupPage> createState() => _SignupPageState();
@@ -18,16 +17,23 @@ class _SignupPageState extends State<SignupPage> {
   String _password = "";
   String _reEnterPassword = "";
   bool isMatch = true;
+  List<AccountInfo> listAccInf = [];
 
   @override
   Widget build(BuildContext context) {
-    // c()async{
-    //   print('gohere');
-    //   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-    //   final SharedPreferences prefs = await _prefs;
-    //   String p = prefs.get(AppKey.AccountID).toString();
-    //   print(p);
-    // }
+    bool checkValidAccount(String useName, String pass, String rePass) {
+      if (pass != rePass) return false;
+      setState(() {
+        listAccInf = widget.list;
+      });
+      for (int i = 0; i < listAccInf.length; i++) {
+        if (listAccInf[i].userName == useName) {
+          print(listAccInf[i].userName);
+          return false;
+        }
+      }
+      return true;
+    }
 
     return Scaffold(
         backgroundColor: Colors.white,
@@ -105,7 +111,7 @@ class _SignupPageState extends State<SignupPage> {
                                     _reEnterPassword = value;
                                   });
                                 },
-                                decoration: InputDecoration( 
+                                decoration: InputDecoration(
                                     border: InputBorder.none,
                                     hintText: "Re-Enter Password",
                                     hintStyle:
@@ -116,26 +122,33 @@ class _SignupPageState extends State<SignupPage> {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.only(top: 10, left: 10),
-                        alignment: Alignment.centerLeft,
-                        child: Text('re-enter password is not matched!', style: TextStyle(color: isMatch?Colors.white : Colors.red))),
+                          padding: const EdgeInsets.only(top: 10, left: 10),
+                          alignment: Alignment.centerLeft,
+                          child: Text('re-enter password is not matched!',
+                              style: TextStyle(
+                                  color: isMatch ? Colors.white : Colors.red))),
                       Container(
                         padding: const EdgeInsets.only(bottom: 20, top: 20),
                         width: 200,
                         alignment: Alignment.centerRight,
-                        child: Text('By sign up, you agree the User Notice and Privacy Policy'),
+                        child: Text(
+                            'By sign up, you agree the User Notice and Privacy Policy'),
                       ),
                       InkWell(
-                        onTap: (){
-                          if(_password == _reEnterPassword){
+                        onTap: () {
+                          if (checkValidAccount(
+                              _userName, _password, _reEnterPassword)) {
+                            print("No home go mom");
                             setState(() {
                               isMatch = true;
                             });
                             print('{$_password} match');
-                            NetworkRequest.sendAccountInfor(_userName, _password, "1234");
-                            
-                          }
-                          else{
+                            NetworkRequest.sendAccountInfor(
+                                _userName, _password, _userName);
+                            //Future.delayed(Duration(seconds: 1));
+                            widget.onFet();
+                            Navigator.pop(context);
+                          } else {
                             setState(() {
                               isMatch = false;
                             });
@@ -161,7 +174,6 @@ class _SignupPageState extends State<SignupPage> {
                           ),
                         ),
                       ),
-                      
                     ],
                   ),
                 )
