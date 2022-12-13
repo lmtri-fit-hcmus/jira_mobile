@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:jira_mobile/custom_widgets/custom_button.dart';
 import 'package:jira_mobile/models/account_info.dart';
 import 'package:jira_mobile/networks/account_request.dart';
+import 'package:jira_mobile/pages/change_password_page.dart';
 import 'package:jira_mobile/pages/signup_page.dart';
 import 'package:jira_mobile/values/share_keys.dart';
 import 'package:password_text_field/password_text_field.dart';
@@ -16,14 +18,13 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   List<AccountInfo> listAccInf = [];
   fetchAccount() {
-      Future<List<AccountInfo>> res = NetworkRequest.fetchAccoutInfo();
-      res.then((dataFromServer) {
-          setState(() {
-            listAccInf = dataFromServer;
-          });
-          
-        });
-    }
+    Future<List<AccountInfo>> res = NetworkRequest.fetchAccoutInfo();
+    res.then((dataFromServer) {
+      setState(() {
+        listAccInf = dataFromServer;
+      });
+    });
+  }
 
   @override
   void initState() {
@@ -50,7 +51,6 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         fetchAccount();
       });
-      print(listAccInf.length);
     }
 
     return Scaffold(
@@ -63,7 +63,8 @@ class _LoginPageState extends State<LoginPage> {
                   height: 250,
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                          image: AssetImage('assets/images/entry/background.png'),
+                          image:
+                              AssetImage('assets/images/entry/background.png'),
                           fit: BoxFit.fill)),
                 ),
                 Padding(
@@ -138,6 +139,13 @@ class _LoginPageState extends State<LoginPage> {
                                 setState(() {
                                   errStr = "";
                                   setAccountID(listAccInf[i].accountId ?? "");
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ChangePasswordPage(
+                                                onFet: onFetch,
+                                              )));
                                 });
                                 break;
                               } else {
@@ -154,23 +162,8 @@ class _LoginPageState extends State<LoginPage> {
                             });
                           }
                         },
-                        child: Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(width: 2),
-                              gradient: LinearGradient(colors: [
-                                Color.fromRGBO(143, 148, 251, 1),
-                                Color.fromRGBO(143, 148, 251, .6),
-                              ])),
-                          child: Center(
-                            child: Text(
-                              "Login",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
+                        child: CustomButtonView(
+                          title: "Login",
                         ),
                       ),
                       Container(
@@ -196,24 +189,8 @@ class _LoginPageState extends State<LoginPage> {
                                         list: listAccInf,
                                       )));
                         },
-                        child: Container(
-                          padding: const EdgeInsets.only(top: 5),
-                          height: 50,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(width: 2),
-                              gradient: LinearGradient(colors: [
-                                Color.fromRGBO(143, 148, 251, 1),
-                                Color.fromRGBO(143, 148, 251, .6),
-                              ])),
-                          child: Center(
-                            child: Text(
-                              "Create account for Jira?",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
+                        child: CustomButtonView(
+                          title: "Create an account for Jira Mobile?",
                         ),
                       ),
                       SizedBox(

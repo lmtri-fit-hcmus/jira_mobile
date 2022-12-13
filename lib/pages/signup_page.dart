@@ -29,7 +29,6 @@ class _SignupPageState extends State<SignupPage> {
       });
       for (int i = 0; i < listAccInf.length; i++) {
         if (listAccInf[i].userName == useName) {
-          print(listAccInf[i].userName);
           return false;
         }
       }

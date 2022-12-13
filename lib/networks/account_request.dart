@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 class NetworkRequest {
   static const String server = "https://api.npoint.io/6518d068b58799ab1715";
   static String body = "";
+
   static List<AccountInfo> parseAccountInfo(String responseBody) {
     var list = jsonDecode(responseBody) as List<dynamic>;
     List<AccountInfo> listAccInf =
@@ -29,17 +30,40 @@ class NetworkRequest {
   }
 
   static Future<http.Response> sendAccountInfor(
-      String userName, String password, String id) {
+      String userName, String password, String id) async {
     String r = jsonEncode(<String, String>{
       'userName': userName,
       'password': password,
       'accountId': id
     });
     r = body + "," + r + "]";
-    return http.post(Uri.parse('$server'),
+    return await http.post(Uri.parse('$server'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: r);
+  }
+
+  static Future<http.Response> changePasswordRequest(
+      String id, String newPass, List<AccountInfo> list) async {
+    String res = "[";
+    list.forEach((element) {
+      if (element.accountId == id) {
+        element.password = newPass;
+      }
+      res += "{";
+      res += "\"password\": \"${element.password}\",";
+      res += "\"userName\": \"${element.userName}\",";
+      res += "\"accountId\": \"${element.accountId}\"";
+      res += "}";
+      if (element != list.last) res += ",";
+    });
+    res += "]";
+    print('afer update: $res');
+    return await http.post(Uri.parse('$server'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: res);
   }
 }
