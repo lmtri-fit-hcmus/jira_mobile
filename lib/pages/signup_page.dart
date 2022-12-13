@@ -34,20 +34,32 @@ class _SignupPageState extends State<SignupPage> {
       }
       return true;
     }
+
     String notMatch = "re-enter password is not matched!";
     String userNotValid = "Username is taken by another!";
+    String passwordInValid = "Password is at least 8 characters";
     return Scaffold(
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
           child: Container(
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage('assets/images/entry/background.png'),
+                    fit: BoxFit.fill)),
             child: Column(
               children: <Widget>[
                 Container(
-                  height: 250,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage('assets/images/entry/background.png'),
-                          fit: BoxFit.fill)),
+                  padding: const EdgeInsets.only(top: 50),
+                  alignment: Alignment.center,
+                  height: 100,
+                  child: Text(
+                    'SIGN UP',
+                    style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.all(30.0),
@@ -127,7 +139,9 @@ class _SignupPageState extends State<SignupPage> {
                           alignment: Alignment.centerLeft,
                           child: Text(currentState,
                               style: TextStyle(
-                                  color: isMatch && isValid ? Colors.white : Colors.red))),
+                                  color: isMatch && isValid
+                                      ? Colors.white
+                                      : Colors.red))),
                       Container(
                         padding: const EdgeInsets.only(bottom: 20, top: 20),
                         width: 200,
@@ -137,27 +151,32 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                       InkWell(
                         onTap: () {
-                          // 
-                          if (_password == _reEnterPassword){
+                          //
+
+                          if (_password == _reEnterPassword) {
                             setState(() {
                               isMatch = true;
                             });
-                            if(checkValidAccount(
-                              _userName, _password)) {
-                            NetworkRequest.sendAccountInfor(
-                                _userName, _password, _userName).then((value) {
-                                  widget.onFet();
-                                  Navigator.pop(context);
-                                });
-                              }
-                            else{
+                            if (_password.length < 8) {
+                              setState(() {
+                                currentState = passwordInValid;
+                                isValid = false;
+                              });
+                            } else if (checkValidAccount(
+                                _userName, _password)) {
+                              NetworkRequest.sendAccountInfor(
+                                      _userName, _password, _userName)
+                                  .then((value) {
+                                widget.onFet();
+                                Navigator.pop(context);
+                              });
+                            } else {
                               setState(() {
                                 currentState = userNotValid;
                                 isValid = false;
                               });
                             }
-                          }
-                          else {
+                          } else {
                             setState(() {
                               isMatch = false;
                               currentState = notMatch;

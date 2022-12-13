@@ -57,15 +57,25 @@ class _LoginPageState extends State<LoginPage> {
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
           child: Container(
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage('assets/images/entry/background.png'),
+                    fit: BoxFit.fill)),
             child: Column(
               children: <Widget>[
                 Container(
-                  height: 250,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image:
-                              AssetImage('assets/images/entry/background.png'),
-                          fit: BoxFit.fill)),
+                  padding: const EdgeInsets.only(top: 50),
+                  alignment: Alignment.center,
+                  width: double.infinity,
+                  height: 100,
+                  child: Text(
+                    'LOG IN',
+                    style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.all(30.0),
