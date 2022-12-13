@@ -19,10 +19,12 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   String currentPass = "";
   String newPass = "";
   String reEnterPass = "";
-  int errType = -1;
+  int errType = 4;
   List listErrorStr = [
     "Current password is not correct!",
     "New password is not match!",
+    "New password too short!",
+    "New password sames as old passord ",
     "",
   ];
 
@@ -62,11 +64,20 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('Error: ${listErrorStr[errType]}');
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: Container(),
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+          ),
+        ),
         title: Text(
           'Change password',
           style: TextStyle(color: Colors.black),
@@ -88,6 +99,15 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             selfDefine_TextInput(title: "New password", setText: setNewPas),
             selfDefine_TextInput(
                 title: "Re-enter new password", setText: setRePas),
+            Container(
+              padding: const EdgeInsets.only(left: 20),
+              alignment: Alignment.centerLeft,
+              height: 30,
+              child: Text(
+                listErrorStr[errType],
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
             InkWell(
               onTap: () {
                 print("cur $currentPass");
@@ -104,9 +124,17 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         setState(() {
                           errType = 1;
                         });
+                      } else if (newPass.length < 8) {
+                        setState(() {
+                          errType = 2;
+                        });
+                      } else if (currentPass == newPass) {
+                        setState(() {
+                          errType = 3;
+                        });
                       } else {
                         setState(() {
-                          errType = 3; //change success!
+                          errType = 4; //change success!
                         });
 
                         NetworkRequest.changePasswordRequest(
