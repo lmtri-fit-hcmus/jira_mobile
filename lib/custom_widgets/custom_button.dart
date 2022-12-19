@@ -12,13 +12,15 @@ class CustomButtonView extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             border: Border.all(width: 2),
             gradient: LinearGradient(colors: [
-              Color.fromRGBO(143, 148, 251, 1),
-              Color.fromRGBO(143, 148, 251, .6),
+              // Color.fromRGBO(143, 148, 251, 1),
+              // Color.fromRGBO(143, 148, 251, .6),
+              Color.fromRGBO(153, 217, 234, 1),
+              Color.fromRGBO(153, 217, 234, .6),
             ])),
         child: Center(
           child: Text(
             this.title,
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
           ),
         ));
   }
