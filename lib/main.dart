@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:jira_mobile/pages/change_password_page.dart';
+import 'package:jira_mobile/pages/epic_page.dart';
 import 'package:jira_mobile/pages/login_page.dart';
+import 'package:jira_mobile/pages/issue_page.dart';
 
 void main() {
   runApp(const JiraMobile());
