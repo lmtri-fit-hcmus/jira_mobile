@@ -41,6 +41,9 @@ dependencies:
   password_validated_field: ^0.0.3
   http: ^0.13.5 
   shared_preferences: ^2.0.15
+  mongo_dart: ^0.8.2
+  intl: ^0.18.0
+  expandable: ^5.0.1
 
 dev_dependencies:
   flutter_test:
