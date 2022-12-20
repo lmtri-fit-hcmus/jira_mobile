@@ -30,3 +30,39 @@ class JiraMobile extends StatelessWidget {
     );
   }
 }
+
+// import "package:mongo_dart/mongo_dart.dart";
+
+// querydb() async {
+//   var db = await Db.create(
+//       "mongodb+srv://jiraclone:group03@clonejira.yknhuht.mongodb.net/account");
+//   await db.open();
+//   var acc = db.collection('account');
+//   await acc.find().forEach((v) {
+//     print(v.toString());
+//   });
+// }
+
+// void main() {
+//   querydb();
+//   runApp(const JiraMobile());
+// }
+
+// class JiraMobile extends StatelessWidget {
+//   const JiraMobile({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Flutter Demo',
+//       theme: ThemeData(
+//         primarySwatch: Colors.blue,
+//       ),
+//       debugShowCheckedModeBanner: false,
+//       home: const LoginPage(),
+//       home: const ChangePasswordPage(),
+//       home: const HomeScreen(),
+//       home: const CreateProject(),
+//     );
+//   }
+// }
