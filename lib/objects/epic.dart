@@ -1,13 +1,21 @@
-class Epic {
-  String? id;
-  String project_id;
-  String name;
-  String? description;
-  String? status;
-  String? assignee_id;
-  String? reporter_id;
-  String? start_date;
-  String? due_date;
+import 'package:jira_mobile/objects/sprint.dart';
 
-  Epic(this.id, this.project_id, this.name, this.description, this.status, this.assignee_id, this.reporter_id, this.start_date, this.due_date);
+class Epic {
+  String _id;
+  String _project_id; //id of project
+  String _name;
+  String _status;
+  String _description;
+  DateTime _start_date;
+  DateTime _due_date;
+  List<Sprint> _list_sprint;
+  Epic(
+      this._id,
+      this._project_id, //id of project
+      this._name,
+      this._status,
+      this._description,
+      this._start_date,
+      this._due_date,
+      this._list_sprint);
 }
