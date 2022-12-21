@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -49,7 +48,8 @@ class _RoadmapCardState extends State<RoadmapCard> {
                   ),
                 ),
                 Text(
-                  (widget.epic.start_date != null ? widget.epic.start_date! : "") + ' - ' + (widget.epic.due_date != null ? widget.epic.due_date! : ""),
+                  //(widget.epic.start_date != null ? widget.epic.start_date! : "") + ' - ' + (widget.epic.due_date != null ? widget.epic.due_date! : ""),
+                  "",
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w300,
@@ -63,5 +63,4 @@ class _RoadmapCardState extends State<RoadmapCard> {
       ),
     );
   }
-
 }
