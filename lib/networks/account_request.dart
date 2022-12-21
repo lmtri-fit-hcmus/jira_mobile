@@ -1,13 +1,21 @@
 import 'dart:convert';
-
+import "package:mongo_dart/mongo_dart.dart";
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:jira_mobile/models/account_info.dart';
 import 'package:http/http.dart' as http;
 
 class NetworkRequest {
-  static const String server = "https://api.npoint.io/6518d068b58799ab1715";
+  static const String server =
+      "mongodb+srv://jiraclone:group03@clonejira.yknhuht.mongodb.net/account";
   static String body = "";
+
+  static Future<DbCollection> LoadServer() async {
+    var db = await Db.create(server);
+    await db.open();
+    var acc = db.collection('account');
+    return acc;
+  }
 
   static List<AccountInfo> parseAccountInfo(String responseBody) {
     var list = jsonDecode(responseBody) as List<dynamic>;
@@ -17,53 +25,37 @@ class NetworkRequest {
   }
 
   static Future<List<AccountInfo>> fetchAccoutInfo({int page = 1}) async {
-    final response = await http.get(Uri.parse('$server'));
-    if (response.statusCode == 200) {
-      print('{$server} parse sucessfully');
-      body = response.body.substring(0, response.body.length - 1);
-      return compute(parseAccountInfo, response.body);
-    } else if (response.statusCode == 404) {
-      throw Exception('Not found server');
-    } else {
-      throw Exception('Can\'t fetch account infor');
-    }
+    var acc = await LoadServer().then((value) => value);
+    String body = "[";
+    int i = 0;
+    await acc.find().forEach((element) {
+      String tmp = "{";
+      tmp += "\"userName\":\"";
+      tmp += element["userName"];
+      tmp += "\",\"accountId\":\"";
+      tmp += element["accountId"];
+      tmp += "\",\"password\":\"";
+      tmp += element["password"];
+      tmp += "\"}";
+      body += tmp;
+      body += ",";
+    });
+    body = body.substring(0, body.length - 1);
+    body += ']';
+    return compute(parseAccountInfo, body);
   }
 
-  static Future<http.Response> sendAccountInfor(
+  static Future<void> sendAccountInfor(
       String userName, String password, String id) async {
-    String r = jsonEncode(<String, String>{
-      'userName': userName,
-      'password': password,
-      'accountId': id
-    });
-    r = body + "," + r + "]";
-    return await http.post(Uri.parse('$server'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: r);
+    var acc = await LoadServer();
+    await acc.insert(
+        {'userName': "$userName", 'password': "$password", 'accountId': "$id"});
   }
 
-  static Future<http.Response> changePasswordRequest(
+  static Future<void> changePasswordRequest(
       String id, String newPass, List<AccountInfo> list) async {
-    String res = "[";
-    list.forEach((element) {
-      if (element.accountId == id) {
-        element.password = newPass;
-      }
-      res += "{";
-      res += "\"password\": \"${element.password}\",";
-      res += "\"userName\": \"${element.userName}\",";
-      res += "\"accountId\": \"${element.accountId}\"";
-      res += "}";
-      if (element != list.last) res += ",";
-    });
-    res += "]";
-    print('afer update: $res');
-    return await http.post(Uri.parse('$server'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: res);
+    var acc = await LoadServer();
+    await acc.updateOne(
+        where.eq('accountId', id), modify.set('password', newPass));
   }
 }
