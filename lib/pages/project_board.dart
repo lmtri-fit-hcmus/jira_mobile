@@ -54,7 +54,10 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
       res.add(
         Card(
           child: ListTile(
-            title: Text(i.toString()),
+            title: Text(
+              i.toString(),
+              style: const TextStyle(fontSize: 15),
+            ),
             onTap: () {},
           ),
         ),
@@ -92,27 +95,38 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        color: const Color.fromARGB(153, 1, 176, 234),
+                        color: const Color.fromARGB(255, 153, 217, 234),
                         width: double.infinity,
                         margin: const EdgeInsets.all(4),
                         child: Column(
                           children: [
                             Align(
                               alignment: Alignment.topLeft,
-                              child: Text(val),
+                              child: Text(
+                                val,
+                                style: const TextStyle(fontSize: 20),
+                              ),
                             ),
                             ListView(
                               physics: const ScrollPhysics(),
                               shrinkWrap: true,
                               children: buildListCard(index),
                             ),
-                            ElevatedButton.icon(
+                            TextButton.icon(
+                              style: ElevatedButton.styleFrom(),
                               onPressed: () {},
                               icon: const Icon(
-                                Icons.create,
+                                Icons.add,
                                 size: 24.0,
+                                color: Colors.black,
                               ),
-                              label: const Text('Create'),
+                              label: const Text(
+                                'Create',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.black,
+                                ),
+                              ),
                             ),
                           ],
                         ),
