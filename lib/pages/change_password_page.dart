@@ -3,6 +3,7 @@ import 'package:jira_mobile/custom_widgets/custom_button.dart';
 import 'package:jira_mobile/models/account_info.dart';
 import 'package:jira_mobile/networks/account_request.dart';
 import 'package:jira_mobile/values/share_keys.dart';
+import 'package:password_text_field/password_text_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChangePasswordPage extends StatefulWidget {
@@ -109,6 +110,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               ),
             ),
             InkWell(
+              
               onTap: () {
                 print("cur $currentPass");
                 print("new $newPass");
@@ -180,7 +182,7 @@ class selfDefine_TextInput extends StatelessWidget {
         decoration: BoxDecoration(
             border:
                 Border.fromBorderSide(BorderSide(color: Colors.grey.shade400))),
-        child: TextField(
+        child: PasswordTextField(
           onChanged: (value) {
             this.setText(value);
           },
