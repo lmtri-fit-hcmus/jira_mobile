@@ -25,20 +25,20 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
   AccountInfo _accountInfo =
       AccountInfo(accountId: '', userName: '', password: '');
   String? accountId = '';
-  Project _project = Project(name: '', key: '');
+  // Project _project = Project(name: '', key: '');
   List<Project> _projects = [
-    Project(name: 'huy1', key: 'huyhuy'),
-    Project(name: 'huy2', key: 'huyhuy'),
-    Project(name: 'huy3', key: 'huyhuy'),
-    Project(name: 'huy4', key: 'huyhuy'),
-    Project(name: 'huy5', key: 'huyhuy'),
-    Project(name: 'huy6', key: 'huyhuy'),
-    Project(name: 'huy7', key: 'huyhuy'),
-    Project(name: 'huy8', key: 'huyhuy'),
-    Project(name: 'huy9', key: 'huyhuy'),
-    Project(name: 'huy10', key: 'huyhuy'),
-    Project(name: 'huy11', key: 'huyhuy'),
-    Project(name: 'huy12', key: 'huyhuy')
+    // Project(name: 'huy1', key: 'huyhuy'),
+    // Project(name: 'huy2', key: 'huyhuy'),
+    // Project(name: 'huy3', key: 'huyhuy'),
+    // Project(name: 'huy4', key: 'huyhuy'),
+    // Project(name: 'huy5', key: 'huyhuy'),
+    // Project(name: 'huy6', key: 'huyhuy'),
+    // Project(name: 'huy7', key: 'huyhuy'),
+    // Project(name: 'huy8', key: 'huyhuy'),
+    // Project(name: 'huy9', key: 'huyhuy'),
+    // Project(name: 'huy10', key: 'huyhuy'),
+    // Project(name: 'huy11', key: 'huyhuy'),
+    // Project(name: 'huy12', key: 'huyhuy')
   ];
 
   // get list project: leader (User x Project), member (User x Project_Member x Project)

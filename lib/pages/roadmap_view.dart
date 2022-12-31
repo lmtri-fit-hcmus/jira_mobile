@@ -5,8 +5,8 @@ import '../objects/epic.dart';
 
 
 class RoadmapViewWidget extends StatefulWidget {
-  // List<Epic> epic_list;
-  RoadmapViewWidget({Key? key}) : super(key: key);
+  List<Epic> epic_list;
+  RoadmapViewWidget({Key? key, required this.epic_list}) : super(key: key);
 
   @override
   _RoadmapViewWidgetState createState() => _RoadmapViewWidgetState();
@@ -24,11 +24,11 @@ class _RoadmapViewWidgetState extends State<RoadmapViewWidget> {
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Column(
-          // children: [
-          //   for (var item in widget.epic_list) RoadmapCard(epic: item)
-          // ],
-          // mainAxisAlignment: MainAxisAlignment.start,
-          // crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (var item in widget.epic_list) RoadmapCard(epic: item)
+          ],
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
         )
       )
     );

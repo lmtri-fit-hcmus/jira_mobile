@@ -144,17 +144,19 @@ class _LoginPageState extends State<LoginPage> {
                       InkWell(
                         onTap: () {
                           int i = 0;
+                          print(listAccInf.length);
                           for (; i < listAccInf.length; i++) {
+                            print(listAccInf[i].userName! + listAccInf[i].password!);
                             if (listAccInf[i].userName == userName) {
                               if (listAccInf[i].password == password) {
                                 setState(() {
                                   errStr = "";
                                   setAccountID(listAccInf[i].accountId ?? "");
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              ProjectMainPageWidget()));
+                                  // Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //         builder: (context) =>
+                                  //             ProjectMainPageWidget()));
                                 });
                                 break;
                               } else {

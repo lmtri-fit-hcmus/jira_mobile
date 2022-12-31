@@ -1,20 +1,20 @@
-import 'dart:ffi';
-
 import 'package:jira_mobile/objects/epic.dart';
+import 'package:mongo_dart/mongo_dart.dart';
 
 class User {
   /*====================================================================*/
-  String _id;
-  String _username;
-  String _password;
-  String _full_name;
-  String _email;
-  String _phone;
-  String _profile_picture;
-  double _time_perform;
-  List<Epic> _list_epic;
+  ObjectId id;
+  String accountId;
+  String username;
+  String password;
+  String full_name;
+  String email;
+  String phone;
+  String profile_picture;
+  double time_perform;
+  List<Epic> list_epic;
   /*====================================================================*/
 
-  User(this._id, this._username, this._password, this._full_name, this._email,
-      this._phone, this._profile_picture, this._time_perform, this._list_epic);
+  User(this.id, this.accountId, this.username, this.password, this.full_name, this.email,
+      this.phone, this.profile_picture, this.time_perform, this.list_epic);
 }

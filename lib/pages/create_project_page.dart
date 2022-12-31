@@ -4,6 +4,7 @@ import 'package:jira_mobile/custom_widgets/custom_button.dart';
 import 'package:jira_mobile/models/account_info.dart';
 import 'package:jira_mobile/objects/project.dart';
 import 'package:jira_mobile/pages/home_screen_page.dart';
+import 'package:mongo_dart/mongo_dart.dart' as md;
 
 class CreateProject extends StatefulWidget {
   // truyen vao thong tin tai khoan (de gan leader)
@@ -21,7 +22,7 @@ class CreateProject extends StatefulWidget {
 }
 
 class _CreateProjectPage extends State<CreateProject> {
-  Project _project = Project(name: '', key: '');
+  Project _project = Project(md.ObjectId.parse('63a3225cf09342b9f7c080c5'), 'Test project 01', 'PROJ-01', md.ObjectId.parse('63a185f5205dbf518ca4ab52'), null, null, [], []);
   String _projectName = '';
   String _projectKey = '';
   List<Project> _projects = [];
