@@ -1,3 +1,4 @@
+import 'package:jira_mobile/objects/issue.dart';
 import 'package:jira_mobile/objects/sprint.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
@@ -11,7 +12,7 @@ class Epic {
   ObjectId? reporter;
   DateTime? start_date;
   DateTime? due_date;
-  List<Sprint> list_sprint;
+  List<Issue> list_issue;
   Epic(
       this.id,
       this.project_id, //id of project
@@ -22,5 +23,5 @@ class Epic {
       this.reporter,
       this.start_date,
       this.due_date,
-      this.list_sprint);
+      this.list_issue);
 }
