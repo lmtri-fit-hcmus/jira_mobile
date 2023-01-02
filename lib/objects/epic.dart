@@ -25,3 +25,43 @@ class Epic {
       this.due_date,
       this.list_issue);
 }
+
+class EpicModel {
+  ObjectId? _id;
+  ObjectId? project;
+  ObjectId? reporter;
+  ObjectId? assignee;
+  String? name;
+  String? description;
+  String? status;
+  Timestamp? startDate;
+  Timestamp? dueDate;
+
+  ObjectId? get getId => _id;
+
+  fromJson(Map json) {
+    _id = json["_id"];
+    name = json["name"];
+    project = json["project"];
+    reporter = json["reporter"];
+    assignee = json["assignee"];
+    startDate = json["startDate"];
+    description = json["description"];
+    status = json["status"];
+    dueDate = json["dueDate"];
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      '_id': _id,
+      'project': project,
+      'reporter': reporter,
+      'assignee': assignee,
+      'name': name,
+      'description': description,
+      'status': status,
+      'dueDate': dueDate,
+      'startDate': startDate,
+    };
+  }
+}

@@ -1,4 +1,3 @@
-// <<<<<<< HEAD
 import 'package:jira_mobile/objects/epic.dart';
 import 'package:jira_mobile/objects/user.dart';
 import 'package:mongo_dart/mongo_dart.dart';
@@ -15,13 +14,39 @@ class Project {
   Project(this.id, this.name, this.key, this.leader, this.avatar,
       this.start_date, this.list_member, this.list_epic);
 }
-// =======
-// import 'package:flutter/material.dart';
-//
-// class Project {
-//   String name;
-//   String key;
-//   // constructor
-//   Project({required this.name,required this.key});
-// }
-//>>>>>>> 243d4a5 (jira_huy)
+
+class ProjectModel {
+  ObjectId? _id;
+  String? name;
+  String? key;
+  String? avatar;
+  ObjectId? leader;
+  Timestamp? startDate;
+  List<dynamic>? members;
+
+  ProjectModel();
+
+  ObjectId? get getId => _id;
+
+  fromJson(Map json) {
+    _id = json["_id"];
+    name = json["name"];
+    key = json["key"];
+    avatar = json["avatar"];
+    leader = json["leader"];
+    startDate = json["startDate"];
+    members = json["members"];
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      '_id': _id,
+      'name': name,
+      'key': key,
+      'avatar': avatar,
+      'leader': leader,
+      'startDate': startDate,
+      'members': members,
+    };
+  }
+}

@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:jira_mobile/objects/project.dart';
+import 'package:jira_mobile/objects/sprint.dart';
+import 'package:jira_mobile/objects/issue.dart';
+import 'package:jira_mobile/networks/project_request.dart';
+
+const userId = "63a185f5205dbf518ca4ab52";
 
 class BacklogTab extends StatefulWidget {
   const BacklogTab({super.key});
@@ -8,12 +14,14 @@ class BacklogTab extends StatefulWidget {
 }
 
 class _BacklogTabBuilder extends State<BacklogTab> {
-  List<String> name = ["Sprint 1", "Sprint 2", "Sprint 3"];
+  List<String> name = ["Sprint 1", "Sprint 2", "Backlog"];
   List<String> status = ["active", "unactive", "active"];
   List<List<String>> data = [
-    ["Task 1.1", "Task 1.2", "Bug 1", "Story 1"],
-    ["Task 2", "Bug 2"],
     [
+      "Task 1.1",
+      "Task 1.2",
+      "Bug 1",
+      "Story 1",
       "Task 3.1",
       "Task 3.2",
       "Bug 3",
@@ -22,23 +30,67 @@ class _BacklogTabBuilder extends State<BacklogTab> {
       "Story 3.1",
       "Story 3.2",
       "Story 3.3"
-    ]
+    ],
+    ["Task 2", "Bug 2"],
+    []
   ];
   Map<String, Icon> iconFor = {
-    'Task': const Icon(Icons.task),
-    'Bug': const Icon(Icons.bug_report),
-    'Story': const Icon(Icons.amp_stories_rounded),
+    'task': const Icon(Icons.task),
+    'bug': const Icon(Icons.bug_report),
+    'story': const Icon(Icons.amp_stories_rounded),
     '': const Icon(Icons.assignment_ind_outlined),
   };
 
-  List<Widget> buildListTile(int id) {
+  Map<SprintModel, List<IssueModel>> issueOfSprint =
+      <SprintModel, List<IssueModel>>{};
+  List<ProjectModel> lsPrj = [];
+  List<SprintModel> lsSprint = [];
+
+  Future<Map<SprintModel, List<IssueModel>>> loadData() async {
+    await getProjectData();
+
+    await getSprintData();
+
+    return await getIssueData();
+  }
+
+  getProjectData() async {
+    lsPrj = await RequestData.getMyProjects(userId);
+  }
+
+  getSprintData() async {
+    for (var prj in lsPrj) {
+      List<SprintModel> res =
+          await RequestData.getMySprint(prj.getId!.toHexString());
+      lsSprint += res;
+    }
+  }
+
+  getIssueData() async {
+    List<List<String>> tmpId = [];
+    Map<SprintModel, List<IssueModel>> tmpIssueOfSprint =
+        <SprintModel, List<IssueModel>>{};
+
+    for (var i = 0; i < lsSprint.length; i++) {
+      var spr = lsSprint[i];
+
+      tmpId.add(
+          await RequestData.getIssueIdFromSprint(spr.getId!.toHexString()));
+      List<IssueModel> lsIss = await RequestData.getMyIssue(tmpId[i]);
+      tmpIssueOfSprint[spr] = lsIss;
+    }
+
+    return tmpIssueOfSprint;
+  }
+
+  List<Widget> buildListTile(List<IssueModel> value) {
     List<Widget> res = <Widget>[];
 
-    for (var val in data[id]) {
-      var type = val.split(" ")[0];
+    for (var val in value) {
+      var type = val.issueType;
       res.add(
         ListTile(
-          title: Text(val),
+          title: Text(val.name.toString()),
           leading: iconFor[type],
           trailing: iconFor[""],
           // onTap: null,
@@ -50,25 +102,69 @@ class _BacklogTabBuilder extends State<BacklogTab> {
   }
 
   List<Widget> buidlExpansionTile() {
+    loadData();
     List<Widget> res = <Widget>[];
 
-    for (var i = 0; i < 3; i++) {
+    issueOfSprint.forEach((key, value) {
       res.add(ExpansionTile(
-        title: Text(name[i]),
-        subtitle: Text("${data[i].length} issue"),
+        title: Text(key.name.toString()),
+        subtitle: Text("${value.length} issue"),
         controlAffinity: ListTileControlAffinity.leading,
-        children: buildListTile(i),
+        children: buildListTile(value),
       ));
-    }
+    });
+
     return res;
   }
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: buidlExpansionTile(),
+      child: FutureBuilder<Map<SprintModel, List<IssueModel>>>(
+        future: loadData(),
+        builder: (BuildContext context,
+            AsyncSnapshot<Map<SprintModel, List<IssueModel>>> snapshot) {
+          List<Widget> children;
+          if (snapshot.hasData) {
+            issueOfSprint = snapshot.data!;
+            children = <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: buidlExpansionTile(),
+              ),
+            ];
+          } else if (snapshot.hasError) {
+            children = <Widget>[
+              const Icon(
+                Icons.error_outline,
+                color: Colors.red,
+                size: 60,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Text('Error: ${snapshot.error}'),
+              ),
+            ];
+          } else {
+            children = const <Widget>[
+              SizedBox(
+                width: 60,
+                height: 60,
+                child: CircularProgressIndicator(),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 16),
+                child: Text('Awaiting result...'),
+              ),
+            ];
+          }
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: children,
+            ),
+          );
+        },
       ),
     );
   }
