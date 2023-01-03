@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mongo_dart/mongo_dart.dart';
 enum IssueStatusType {
   toDo, inProgress, done
 }
@@ -18,4 +19,29 @@ class Status {
   IssueStatusType get type => _type;
   String get data => _data;
   Color get color => _color;
+
+  
 }
+Status setStatus(String value) {
+  IssueStatusType type = IssueStatusType.toDo;
+  String data = "TO DO" ;
+  Color color = backgroundStatus[IssueStatusType.toDo]!;
+    switch(value){
+      case "TO DO":
+        type = IssueStatusType.toDo;
+        data = "TO DO";
+        color = backgroundStatus[IssueStatusType.toDo]!;
+        break;
+      case "IN PROGRESS":
+        type = IssueStatusType.inProgress;
+        data = "IN PROGRESS";
+        color = backgroundStatus[IssueStatusType.inProgress]!;
+        break;
+      case "DONE":
+        type = IssueStatusType.done;
+        data = "DONE";
+        color = backgroundStatus[IssueStatusType.done]!;
+        break;
+    }
+    return Status(type, data, color);
+  }

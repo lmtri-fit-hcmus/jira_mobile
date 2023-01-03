@@ -1,3 +1,6 @@
+import 'dart:ffi';
+
+import 'package:jira_mobile/dbhelper/mongodb.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mongodb;
 import 'package:jira_mobile/epic_issue_page_component/class_status.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +16,8 @@ class IssuePage extends StatefulWidget {
 }
 
 class _IssuePageState extends State<IssuePage> {
+  mongodb.ObjectId _issueId = mongodb.ObjectId.fromHexString('63a5f51144989a1167408213');
+  bool _isNavigation = true;
   //handle text field event
   bool _isVisible = false;
   bool _isFirstClick = true;
@@ -21,12 +26,87 @@ class _IssuePageState extends State<IssuePage> {
   //issue status
   Status _status = Status(IssueStatusType.toDo, "TO DO",backgroundStatus[IssueStatusType.toDo]!);
 
+  //epic parent
+  String _epicName = '';
+
+  //sprint name
+  String _sprintName = '';
+  //assignee
+  String _assigneeName = "Unassigned";
+  var _listMemberId = <mongodb.ObjectId>[];
+  var _listMemberUser = <String>[];
+
+  void _fetchData(mongodb.ObjectId id) {
+    Future<Map<String,dynamic>> issue = MongoDatabase.getIssue(id);
+    issue.then((issueData) {
+      //print("issue data is: ${issueData.toString()}");
+      setState(() {
+              _issueNameController.text = issueData['name'];
+              _status = setStatus(issueData['status']);
+              //get parent epic of this issue 
+              Future<Map<String,dynamic>?> parentEpic = MongoDatabase.getParentEpic(issueData['_id']);
+              parentEpic.then((epicData) {
+
+                if(epicData != null) {
+                  //print("epic data is ${epicData.toString()}");
+                  setState(() {
+                    _epicName = epicData['name'];
+                  });
+                  
+                  //get project_member 
+                  Future<Map<String,dynamic>> project = MongoDatabase.getProjectMemberId(epicData['project']);
+                  project.then((projectData) {
+                    //print("project data is ${projectData.toString()}");
+                    for(int i = 0; i < projectData['members'].length; i++) {
+                      _listMemberId.add(projectData['members'][i] as mongodb.ObjectId);
+                    }
+                    //get member data like name, id, phone_number,...
+                    MongoDatabase.getListMemberInProject(_listMemberId).then((value) {
+                      for (int i = 0; i < value.length; i++){
+                        _listMemberUser.add(value[i]['name']);
+                        if(value[i]['_id'] == issueData['assignee']) {
+                          _assigneeName = value[i]['name'];
+                        }
+                      }
+                  }
+                );
+              }
+            );
+          }
+        }
+      );
+              //get sprint which this issue is in
+              Future<Map<String,dynamic>?> sprint = MongoDatabase.getSprintByIssueId(issueData['_id']);
+              sprint.then((sprintData) {
+                if(sprintData != null) {
+                  //print("sprint data is ${sprintData.toString()}");
+                  setState(() {
+                    _sprintName = sprintData['name'];
+                  });
+                }
+              });
+
+    }
+  );
+});
+}
+
+  
+
   @override
   void initState() {
     super.initState();
+    //print("on call");
+    //_fetchData(_issueId);
   }
   @override
   Widget build(BuildContext context) {
+    if(_isNavigation) {
+      _issueId = ModalRoute.of(context)!.settings.arguments as mongodb.ObjectId;
+      _isNavigation = false;
+      _fetchData(_issueId);
+    }
+    
     return Scaffold(
 
       appBar: AppBar(
@@ -94,6 +174,7 @@ class _IssuePageState extends State<IssuePage> {
                                   setState(() {
                                     _isVisible = !_isVisible;
                                     _isFirstClick = !_isFirstClick;
+                                    MongoDatabase.updateIssue(_issueId, 'name', _issueNameController.text);
                                   });
                                 },)
                             )
@@ -145,15 +226,56 @@ class _IssuePageState extends State<IssuePage> {
                 thickness:2.0,
                 ),
               label("Parent issue"),
-              issueType(Icons.assignment_outlined, "epic 1",const  Color.fromARGB(237, 239, 19, 206)),
+              issueType(Icons.assignment_outlined, _epicName,const  Color.fromARGB(237, 239, 19, 206)),
               label("Issue type"),
               issueType(Icons.domain_verification, "Task",const Color.fromARGB(255, 30, 213, 241)),
               label("Sprint"),
-              const Text(
-              "Sprint 1"
+              Text(
+              _sprintName
               ),
-              label("Assignee"),
-              issueType(Icons.portrait_rounded, "member A",const  Color.fromARGB(217, 132, 1, 239))
+              Row(
+                
+                children: [
+                  InkWell(
+                    child:  Column(
+                      children: [
+                        label("Assignee"),
+                        issueType(Icons.portrait_rounded, _assigneeName,const  Color.fromARGB(217, 132, 1, 239)),
+                      ],
+                    ),
+                    onTap: () {
+                        showModalBottomSheet(context: context, builder: (context) {
+                          return Container(
+                            margin: EdgeInsets.all(8),
+                            child: ListView.builder(
+                              padding:const EdgeInsets.only(top: 10, bottom: 10),
+                              shrinkWrap: true,
+                              itemCount: _listMemberUser.length,
+                              itemBuilder:((context, index) {
+                                return Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                     InkWell(
+                                  child: Text(_listMemberUser[index],
+                                    style:const TextStyle(fontSize: 25)),
+                                  onTap: () {
+                                    setState(() {
+                                      _assigneeName = _listMemberUser[index];
+                                      MongoDatabase.updateIssue(_issueId, 'assignee', _listMemberId[index]);
+                                      Navigator.pop(context);
+                                    });
+                                  },
+                                )
+                                  ],
+                                );
+                              }) ),
+                          );
+                        });
+                    },
+                  ),
+                ],
+              ),
               ],
             ),
           ),
@@ -187,13 +309,16 @@ class _IssuePageState extends State<IssuePage> {
     Navigator.pop(context);
     switch(type) {
       case IssueStatusType.toDo:
-        _status = Status(IssueStatusType.toDo, "TO DO",backgroundStatus[IssueStatusType.toDo]!);
+        _status = setStatus("TO DO");
+        MongoDatabase.updateIssue(_issueId, 'status', "TO DO");
         break;
       case IssueStatusType.inProgress:
-        _status = Status(IssueStatusType.inProgress, "IN PROGRESS",backgroundStatus[IssueStatusType.inProgress]!);
+        _status = setStatus("IN PROGRESS");
+        MongoDatabase.updateIssue(_issueId, 'status', "IN PROGRESS");
         break;
       case IssueStatusType.done: 
-        _status = Status(IssueStatusType.done, "DONE",backgroundStatus[IssueStatusType.done]!);
+        _status = setStatus("DONE");
+        MongoDatabase.updateIssue(_issueId, 'status', "DONE");
         break;
     }
   }
