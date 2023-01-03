@@ -3,6 +3,7 @@ import 'package:jira_mobile/custom_widgets/custom_button.dart';
 import 'package:jira_mobile/models/account_info.dart';
 import 'package:jira_mobile/networks/account_request.dart';
 import 'package:jira_mobile/pages/change_password_page.dart';
+import 'package:jira_mobile/pages/project_main_page.dart';
 import 'package:jira_mobile/pages/signup_page.dart';
 import 'package:jira_mobile/values/share_keys.dart';
 import 'package:password_text_field/password_text_field.dart';
@@ -143,19 +144,19 @@ class _LoginPageState extends State<LoginPage> {
                       InkWell(
                         onTap: () {
                           int i = 0;
+                          print(listAccInf.length);
                           for (; i < listAccInf.length; i++) {
+                            print(listAccInf[i].userName! + listAccInf[i].password!);
                             if (listAccInf[i].userName == userName) {
                               if (listAccInf[i].password == password) {
                                 setState(() {
                                   errStr = "";
                                   setAccountID(listAccInf[i].accountId ?? "");
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              ChangePasswordPage(
-                                                onFet: onFetch,
-                                              )));
+                                  // Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //         builder: (context) =>
+                                  //             ProjectMainPageWidget()));
                                 });
                                 break;
                               } else {
