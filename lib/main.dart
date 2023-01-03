@@ -21,6 +21,9 @@ import 'package:get_it/get_it.dart';
 final getit = GetIt.instance;
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await MongoDatabase.connect();
+  
   var appdb = AppDB();
   await appdb.connect();
   getit.registerSingleton<AppDB>(appdb);
