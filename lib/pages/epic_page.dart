@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:jira_mobile/dbhelper/mongodb.dart';
 import 'package:jira_mobile/epic_issue_page_component/class_status.dart';
 import 'package:jira_mobile/epic_issue_page_component/component.dart';
 import 'package:intl/intl.dart';
 import 'package:expandable/expandable.dart';
+import 'package:jira_mobile/pages/issue_page.dart';
+import 'package:mongo_dart/mongo_dart.dart' as mongodb;
 class EpicPage extends StatefulWidget {
   const EpicPage({super.key});
 
@@ -11,14 +14,19 @@ class EpicPage extends StatefulWidget {
 }
 
 class _EpicPageState extends State<EpicPage> {
+  mongodb.ObjectId _epicId = mongodb.ObjectId.fromHexString("63a325b2f09342b9f7c080c8");
+  bool _isNavigation = true;
+  //name epic 
  //handle text field event
   bool _isVisible = false;
   bool _isFirstClick = true;
   final TextEditingController _issueNameController = TextEditingController(text: "");
 
   //issue status
-  Status _status = Status(IssueStatusType.toDo, "TO DO",backgroundStatus[IssueStatusType.toDo]!);
-  //datatime pichup
+  Status _status =setStatus("TO DO");
+  
+
+  //datatime pickup
   /*
   true - start
   false - end
@@ -29,18 +37,81 @@ class _EpicPageState extends State<EpicPage> {
 
   //child issue
   var list = <String>[];
+  var listId = <mongodb.ObjectId>[];
   /*when user click create child issue make create disappear 
   and text file appear*/
   bool _isVisible2 = true;
-  String newChildIssue = "";
-  @override
-  void initState() {
-    super.initState();
+  String newChildIssueName = "";
 
+  //assignee
+  String _assigneeName = "Unassigned";
+  var _listMemberId = <mongodb.ObjectId>[];
+  var _listMemberUser = <String>[];
+  
+  void _fetchData(mongodb.ObjectId id) {
+    Future<Map<String,dynamic>> epic = MongoDatabase.getEpic(id);
+    epic.then((epicData) {
+        setState(() {
+        //print("epic data is: ${epicData.toString()}");
+
+        _issueNameController.text = epicData['name'];
+        _status = setStatus(epicData['status']);
+        _startDay = epicData['start_date'];
+        _endDay = epicData['due_date'];
+        Future<Map<String,dynamic>> project = MongoDatabase.getProjectMemberId(epicData['project']);
+        project.then((projectData) {
+          //print("project data is ${projectData.toString()}");
+
+          for(int i = 0; i < projectData['members'].length; i++) {
+              _listMemberId.add(projectData['members'][i] as mongodb.ObjectId);
+          }
+          
+          MongoDatabase.getListMemberInProject(_listMemberId).then((value) {
+              //print("list member is : ${value.toString()}");
+
+              for (int i = 0; i < value.length; i++){
+                _listMemberUser.add(value[i]['name']);
+                if(value[i]['_id'] == epicData['assignee']) {
+                  _assigneeName = value[i]['name'];
+                }
+              }
+          });
+        });
+
+        });
+    });
+
+    Future<Map<String,dynamic>?> epicIssue = MongoDatabase.getEpicIssues(id);
+    epicIssue.then((value) {
+      if(value != null) {
+        //print("list child issue is: ${value.toString()}");
+        for (int i = 0; i < value['issues'].length; i ++){
+          listId.add(value['issues'][i]);
+          Future<Map<String,dynamic>> issue = MongoDatabase.getIssue(listId[i]);
+          issue.then((value) {
+            setState(() {
+              list.add(value['name']);
+            });
+          } );
+        }
+      }
+    }
+    );
+  }
+  @override
+  void initState()  {
+    super.initState();
+    _fetchData(_epicId);
   }
   @override
   Widget build(BuildContext context) {
-    
+    if(_isNavigation) {
+      _epicId = ModalRoute.of(context)!.settings.arguments as mongodb.ObjectId;
+      _isNavigation = false;
+      _fetchData(_epicId);
+    }
+
+
     return Scaffold(
 
       appBar: AppBar(
@@ -108,6 +179,7 @@ class _EpicPageState extends State<EpicPage> {
                                   setState(() {
                                     _isVisible = !_isVisible;
                                     _isFirstClick = !_isFirstClick;
+                                    MongoDatabase.updateEpic(_epicId, 'name', _issueNameController.text);
                                   });
                                 },)
                             )
@@ -179,8 +251,50 @@ class _EpicPageState extends State<EpicPage> {
               issueType(Icons.assignment_outlined, "Epic",const  Color.fromARGB(237, 239, 19, 206)),
               pickupDateWidget("Start day", _startDay),
               pickupDateWidget("Due day", _endDay),
-              label("Assignee"),
-              issueType(Icons.portrait_rounded, "member A",const  Color.fromARGB(217, 132, 1, 239))
+             
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  InkWell(
+                    child:  Column(
+                      children: [
+                        label("Assignee"),
+                        issueType(Icons.portrait_rounded, _assigneeName,const  Color.fromARGB(217, 132, 1, 239)),
+                      ],
+                    ),
+                    onTap: () {
+                        showModalBottomSheet(context: context, builder: (context) {
+                          return Container(
+                            margin: EdgeInsets.all(8),
+                            child: ListView.builder(
+                              padding:const EdgeInsets.only(top: 10, bottom: 10),
+                              shrinkWrap: true,
+                              itemCount: _listMemberUser.length,
+                              itemBuilder:((context, index) {
+                                return Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                     InkWell(
+                                  child: Text(_listMemberUser[index],
+                                    style:const TextStyle(fontSize: 25)),
+                                  onTap: () {
+                                    setState(() {
+                                      _assigneeName = _listMemberUser[index];
+                                      MongoDatabase.updateEpic(_epicId, 'assignee', _listMemberId[index]);
+                                      Navigator.pop(context);
+                                    });
+                                  },
+                                )
+                                  ],
+                                );
+                              }) ),
+                          );
+                        });
+                    },
+                  ),
+                ],
+              ),
               ],
             ),
           ),
@@ -214,13 +328,16 @@ class _EpicPageState extends State<EpicPage> {
     Navigator.pop(context);
     switch(type) {
       case IssueStatusType.toDo:
-        _status = Status(IssueStatusType.toDo, "TO DO",backgroundStatus[IssueStatusType.toDo]!);
+        _status = setStatus("TO DO");
+        MongoDatabase.updateEpic(_epicId, 'status', "TO DO");
         break;
       case IssueStatusType.inProgress:
-        _status = Status(IssueStatusType.inProgress, "IN PROGRESS",backgroundStatus[IssueStatusType.inProgress]!);
+        _status = setStatus("IN PROGRESS");
+        MongoDatabase.updateEpic(_epicId, 'status', "IN PROGRESS");
         break;
       case IssueStatusType.done: 
-        _status = Status(IssueStatusType.done, "DONE",backgroundStatus[IssueStatusType.done]!);
+        _status = setStatus("DONE");
+        MongoDatabase.updateEpic(_epicId, 'status', "DONE");
         break;
     }
   }
@@ -262,8 +379,10 @@ class _EpicPageState extends State<EpicPage> {
         String day = DateFormat('dd-MM-yyyy').format(value).toString();
         if(__isStartOrEnd) {
           _startDay = day;
+          MongoDatabase.updateEpic(_epicId, 'start_date', _startDay);
         }else {
           _endDay = day;
+          MongoDatabase.updateEpic(_epicId, 'due_date', _endDay);
         }
       });
     }) ;
@@ -276,7 +395,14 @@ class _EpicPageState extends State<EpicPage> {
         itemCount: list.length,
         itemBuilder: (context, index) {
           return InkWell(
-            onTap: (){},
+            onTap: (){
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder:(context) {
+                  return const IssuePage();
+                },
+                settings: RouteSettings(arguments: listId[index])),);
+            },
             child: Container(
               margin: const EdgeInsets.all(10),
               child: Text(list[index]),
@@ -313,7 +439,7 @@ class _EpicPageState extends State<EpicPage> {
                   border: UnderlineInputBorder()
                 ),
                 onChanged: (newName) {
-                    newChildIssue = newName;
+                    newChildIssueName = newName;
                 },
               ),
               Row(
@@ -333,7 +459,9 @@ class _EpicPageState extends State<EpicPage> {
                       FocusScope.of(context).requestFocus( FocusNode());
                       setState(() {
                         _isVisible2 = !_isVisible2;
-                        list.add(newChildIssue);
+                        list.add(newChildIssueName);
+                        listId.add(mongodb.ObjectId.fromSeconds(DateTime.now().microsecondsSinceEpoch));
+                        MongoDatabase.insertChildissue(_epicId, listId, newChildIssueName);
                       });
                     }, 
                     child: const Text("OK")
