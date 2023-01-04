@@ -11,6 +11,7 @@ import 'package:jira_mobile/pages/login_page.dart';
 import 'package:jira_mobile/pages/create_project_page.dart';
 import 'package:jira_mobile/pages/login_page.dart';
 import 'package:jira_mobile/pages/home_screen_page.dart';
+import 'package:jira_mobile/pages/project_board.dart';
 import 'package:jira_mobile/pages/project_main_page.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
@@ -39,15 +40,16 @@ class JiraMobile extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.blue
       ),
       //debugShowCheckedModeBanner: false,
-      home: ProjectMainPageWidget(
-        current_user: User(ObjectId.parse('63a185f5205dbf518ca4ab52'),"tri.le", "tri.le", "11111111", "full name", "email", "phone", "", 0.0, []),
-        current_project: custom.Project(ObjectId.parse('63a3225cf09342b9f7c080c5'), 'Test project 01', 'PROJ-01', ObjectId.parse('63a185f5205dbf518ca4ab52'), null, null, [], []))
+      // home: ProjectMainPageWidget(
+      //   current_user: User(ObjectId.parse('63a185f5205dbf518ca4ab52'),"tri.le", "tri.le", "11111111", "full name", "email", "phone", "", 0.0, []),
+      //   current_project: custom.Project(ObjectId.parse('63a3225cf09342b9f7c080c5'), 'Test project 01', 'PROJ-01', ObjectId.parse('63a185f5205dbf518ca4ab52'), null, null, [], []))
       //home: const ChangePasswordPage(),
-      //home: const HomeScreen(),
+      home: const HomeScreen(userId: "63a185f5205dbf518ca4ab52"),
       //home: const CreateProject(),
+      //home: const BoardTab(),
     );
   }
 }
