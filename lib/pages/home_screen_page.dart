@@ -5,16 +5,18 @@ import 'package:footer/footer.dart';
 import 'package:jira_mobile/models/account_info.dart';
 import 'package:jira_mobile/objects/project.dart';
 import 'package:jira_mobile/pages/create_project_page.dart';
+import 'package:jira_mobile/pages/project_backlog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jira_mobile/networks/project_request.dart';
 
 import '../values/share_keys.dart';
 
 class HomeScreen extends StatefulWidget {
   // truyen vo AccountInfo roi doc database lay cac project ma account nay la leader + member add vao _projects
-  //final AccountInfo accountInfo;
-  //const HomeScreen({super.key, required this.accountInfo});
+  final String userId;
+  const HomeScreen({super.key, required this.userId});
 
-  const HomeScreen({super.key});
+  //const HomeScreen({super.key});
   @override
   State<HomeScreen> createState() {
     return _HomeScreenPage();
@@ -22,46 +24,43 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
-  AccountInfo _accountInfo =
-      AccountInfo(accountId: '', userName: '', password: '');
-  String? accountId = '';
-  // Project _project = Project(name: '', key: '');
-  List<Project> _projects = [
-    // Project(name: 'huy1', key: 'huyhuy'),
-    // Project(name: 'huy2', key: 'huyhuy'),
-    // Project(name: 'huy3', key: 'huyhuy'),
-    // Project(name: 'huy4', key: 'huyhuy'),
-    // Project(name: 'huy5', key: 'huyhuy'),
-    // Project(name: 'huy6', key: 'huyhuy'),
-    // Project(name: 'huy7', key: 'huyhuy'),
-    // Project(name: 'huy8', key: 'huyhuy'),
-    // Project(name: 'huy9', key: 'huyhuy'),
-    // Project(name: 'huy10', key: 'huyhuy'),
-    // Project(name: 'huy11', key: 'huyhuy'),
-    // Project(name: 'huy12', key: 'huyhuy')
-  ];
+  // AccountInfo _accountInfo =
+  //     AccountInfo(accountId: '', userName: '', password: '');
+  // String? accountId = '';
+  // // Project _project = Project(name: '', key: '');
+  // List<Project> _projects = [
+  //   // Project(name: 'huy1', key: 'huyhuy'),
+  //   // Project(name: 'huy2', key: 'huyhuy'),
+  //   // Project(name: 'huy3', key: 'huyhuy'),
+  //   // Project(name: 'huy4', key: 'huyhuy'),
+  //   // Project(name: 'huy5', key: 'huyhuy'),
+  //   // Project(name: 'huy6', key: 'huyhuy'),
+  //   // Project(name: 'huy7', key: 'huyhuy'),
+  //   // Project(name: 'huy8', key: 'huyhuy'),
+  //   // Project(name: 'huy9', key: 'huyhuy'),
+  //   // Project(name: 'huy10', key: 'huyhuy'),
+  //   // Project(name: 'huy11', key: 'huyhuy'),
+  //   // Project(name: 'huy12', key: 'huyhuy')
+  // ];
 
-  // get list project: leader (User x Project), member (User x Project_Member x Project)
-  getProject() {
-    // _project =
+  List<ProjectModel> projects = [];
+
+  Future<List<ProjectModel>> loadData() async {
+    return await getProjectData();
+  }
+  
+  Future<List<ProjectModel>> getProjectData() async {
+    List<ProjectModel> res = [];
+    res = await RequestData.getMyProjects(userId);
+    return res;
   }
 
-  x() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      accountId = prefs.getString(AppKey.AccountID);
-    });
-  }
+  PageController pageController = PageController();
 
   @override
   void initState() {
+    // pageController = PageController();
     super.initState();
-    // lay projects tu tham so dau vao
-    setState(() {
-      //_accountInfo = widget.accountInfo;
-      getProject();
-      x();
-    });
   }
 
   @override
@@ -69,8 +68,9 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    List<Widget> _buildProjectsList() {
-      return _projects.map((eachProject) {
+    List<Widget> buildProjectsList() {
+      // loadData();
+      return projects.map((eachProject) {
         return Card(
             shape: RoundedRectangleBorder(
                 // borderRadius: BorderRadius.circular(10),
@@ -90,7 +90,7 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
                         size: 40,
                         color: Colors.black),
                     title: Text(
-                      eachProject.name,
+                      eachProject.getName.toString(),
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -98,9 +98,9 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
                       ),
                     ),
                     subtitle: Text(
-                      eachProject.key,
+                      eachProject.getKey.toString(),
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.w100,
                         color: Colors.black,
                       ),
@@ -132,8 +132,8 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
                     context,
                     MaterialPageRoute(
                         builder: (context) => CreateProject(
-                              accountInfo: _accountInfo,
-                              projects: _projects,
+                              userId: userId,
+                              projects: projects,
                             )));
               },
             ),
@@ -151,37 +151,82 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
         ),
         body: SafeArea(
           child: SingleChildScrollView(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                // account's project
-                Container(
-                    child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.fromLTRB(15, 30, 0, 30),
-                      child: Text(
-                        "All projects",
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black,
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                  // account's project
+                  Container(
+                      child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.fromLTRB(15, 30, 0, 30),
+                        child: Text(
+                          "All projects",
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
-                    ),
+          
+                      // show all project
+                      Container(
+                          margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                          // height of list view
+                          height: screenHeight - 250,
 
-                    // show all project
-                    Container(
-                        margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                        // height of list view
-                        height: screenHeight - 250,
-                        child: ListView(
-                          children: _buildProjectsList(),
-                        ))
-                  ],
-                )),
-              ])),
+                          child: FutureBuilder<List<ProjectModel>>(
+                            future: loadData(),
+                            builder: (BuildContext context, 
+                                AsyncSnapshot<List<ProjectModel>> snapshot) {
+                              List<Widget> children;
+                              if (snapshot.hasData) {
+                                print('has data');
+                                projects = snapshot.data!;
+                                children = buildProjectsList();
+                              }
+                              else if (snapshot.hasError) {
+                                print('error data');
+                                children = <Widget>[
+                                  const Icon(
+                                    Icons.error_outline,
+                                    color: Colors.red,
+                                    size: 60,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 16),
+                                    child: Text('Error: ${snapshot.error}'),
+                                  ),
+                                ];
+                              }
+                              else {
+                                print('load data');
+                                children = const <Widget>[
+                                  SizedBox(
+                                    width: 60,
+                                    height: 60,
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 16),
+                                    child: Text('Awaiting result...'),
+                                  ),
+                                ];
+                              }
+                              return Center(
+                                child: Column(
+                                  //mainAxisAlignment: MainAxisAlignment.center,
+                                  children: children,
+                                ),
+                              );
+                            },            
+                          ),
+                      )
+                    ],
+                  )),
+                ])),
         ),
         bottomNavigationBar: BottomAppBar(
             child: Container(
@@ -200,7 +245,7 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
                     icon: Icon(
                       CommunityMaterialIcons.home_outline,
                       size: 30,
-                      color: Colors.black,
+                      color: Colors.primaryColor,
                     ),
                     onPressed: () {},
                   ),
@@ -208,7 +253,7 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
                       padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
                       child: Text('Home',
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Colors.primaryColor,
                             fontWeight: FontWeight.w500,
                           )))
                 ],
