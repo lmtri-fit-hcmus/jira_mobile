@@ -233,13 +233,14 @@ class _IssuePageState extends State<IssuePage> {
               Text(
               _sprintName
               ),
+              label("Assignee"),
               Row(
                 
                 children: [
                   InkWell(
                     child:  Column(
                       children: [
-                        label("Assignee"),
+                        
                         issueType(Icons.portrait_rounded, _assigneeName,const  Color.fromARGB(217, 132, 1, 239)),
                       ],
                     ),
