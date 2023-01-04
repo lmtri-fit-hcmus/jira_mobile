@@ -54,7 +54,7 @@ class _IssuePageState extends State<IssuePage> {
                   });
                   
                   //get project_member 
-                  Future<Map<String,dynamic>> project = MongoDatabase.getProjectMemberId(epicData['project']);
+                  Future<Map<String,dynamic>> project = MongoDatabase.getProjectMemberId(epicData['project_id']);
                   project.then((projectData) {
                     //print("project data is ${projectData.toString()}");
                     for(int i = 0; i < projectData['members'].length; i++) {
