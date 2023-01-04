@@ -58,7 +58,7 @@ class _EpicPageState extends State<EpicPage> {
         _status = setStatus(epicData['status']);
         _startDay = epicData['start_date'];
         _endDay = epicData['due_date'];
-        Future<Map<String,dynamic>> project = MongoDatabase.getProjectMemberId(epicData['project']);
+        Future<Map<String,dynamic>> project = MongoDatabase.getProjectMemberId(epicData['project_id']);
         project.then((projectData) {
           //print("project data is ${projectData.toString()}");
 
