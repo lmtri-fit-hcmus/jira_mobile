@@ -20,7 +20,7 @@ import 'objects/user.dart';
 import 'package:get_it/get_it.dart';
 
 final getit = GetIt.instance;
-final User user1 = User(ObjectId.parse('63a6ccc438cd7617e0e18e6b'),"user2", "user2", "456", "Le Minh Tri", "", "", "", 0.0, []);
+final User user1 = User(ObjectId.parse('63a6ccc438cd7617e0e18e6b'),"user2", "user2", "456", "Le Minh Tri", "", "", 0.0, []);
 final custom.Project cur_project = custom.Project(ObjectId.parse('63a3225cf09342b9f7c080c5'), 'Test project 01', 'PROJ-01', ObjectId.parse('63a6ccc438cd7617e0e18e6b'), 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTq8lnfQkQZioZCMqDjQrRaU7r438bhXKGtgQ&usqp=CAU', null, [], []);
 
 void main() async {

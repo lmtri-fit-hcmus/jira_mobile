@@ -459,7 +459,7 @@ class _CreateEpicPageWidgetState extends State<CreateEpicPageWidget> {
                                     ),
                                   ),
                                   Text(
-                                    pickedAssignee?.full_name ?? "",
+                                    pickedAssignee?.name ?? "",
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
                                       fontSize: 16,
@@ -548,7 +548,7 @@ class _CreateEpicPageWidgetState extends State<CreateEpicPageWidget> {
                                     ),
                                   ),
                                   Text(
-                                    pickedReporter.name,
+                                    pickedReporter.name??"",
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
                                       fontSize: 16,

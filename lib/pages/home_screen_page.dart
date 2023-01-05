@@ -183,8 +183,7 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
                                   ),
                                 ];
                               }
-                              else {
-                                print('load data');
+                              else {print('load data');
                                 children = const <Widget>[
                                   SizedBox(
                                     width: 60,
@@ -192,7 +191,7 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
                                     child: CircularProgressIndicator(),
                                   ),
                                   Padding(
-                          https://github.com/lmtri-fit-hcmus/jira_mobile/pull/7/conflict?name=lib%252Fpages%252Fhome_screen_page.dart&ancestor_oid=646a74d4d8b7531c5f625964c4e4dc4fdc05f601&base_oid=3c49d4c09bb88ea1bae5099cd747c0ebcdb5e751&head_oid=59783718cbb0a6e0f86282cbee7c873d4a2d0bdf          padding: EdgeInsets.only(top: 16),
+                                    padding: EdgeInsets.only(top: 16),
                                     child: Text('Awaiting result...'),
                                   ),
                                 ];

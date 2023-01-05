@@ -7,7 +7,7 @@ class AppInfo {
   late Project current_project;
 
   AppInfo() {
-    current_user = User(md.ObjectId(), '', '', '', '', '', '', '', 0, []);
+    current_user = User(md.ObjectId(), '', '', '', '', '', '', 0, []);
     current_project = Project(md.ObjectId(), '', '', md.ObjectId(), null, null, [], []);
   }
 }
