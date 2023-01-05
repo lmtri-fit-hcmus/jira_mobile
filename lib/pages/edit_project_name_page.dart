@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:jira_mobile/objects/appdb.dart';
+import 'package:mongo_dart/mongo_dart.dart' as md;
+
+import '../objects/appinfo.dart';
+import '../objects/project.dart';
+import '../objects/user.dart';
 
 class EditProjectNamePageWidget extends StatefulWidget {
-  const EditProjectNamePageWidget({Key? key}) : super(key: key);
+  Function refresh_callback;
+  EditProjectNamePageWidget({Key? key, required this.refresh_callback}) : super(key: key);
 
   @override
   _EditProjectNamePageWidgetState createState() =>
@@ -10,6 +18,8 @@ class EditProjectNamePageWidget extends StatefulWidget {
 
 class _EditProjectNamePageWidgetState extends State<EditProjectNamePageWidget> {
   TextEditingController? textController;
+  User current_user = GetIt.instance<AppInfo>().current_user;
+  Project current_project = GetIt.instance<AppInfo>().current_project;
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -22,6 +32,47 @@ class _EditProjectNamePageWidgetState extends State<EditProjectNamePageWidget> {
   void dispose() {
     textController?.dispose();
     super.dispose();
+  }
+
+  void handle() async {
+    var new_proj_name = textController?.text;
+    if (new_proj_name == null || new_proj_name.length <= 0)
+    {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Project\'s name can\'t be empty')));
+      return;
+    }
+
+    var is_authorized = await isAuthorized();
+    if (!is_authorized) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Only the project leader can change project\'s name')));
+      return;
+    }
+
+    var coll = GetIt.instance<AppDB>().main_db.collection('projects');
+    var res = await coll.updateOne(md.where.eq('_id', current_project.id), md.modify.set('name', new_proj_name));
+    if (res.isSuccess) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Successfully updated project\'s name')));
+      setState(() {
+        GetIt.instance<AppInfo>().current_project.name = new_proj_name;
+      });
+      widget.refresh_callback();
+      Navigator.pop(context);
+    }
+    else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to update project\'s name, please try again')));
+    }
+  }
+
+  Future<bool> isAuthorized() async {
+    var coll = GetIt.instance<AppDB>().main_db.collection('projects');
+    var res = await coll.findOne(md.where.eq('_id', current_project.id));
+    var result = false;
+    if (res != null) {
+      if (res['leader'] != null && res['leader'] == current_user.id)
+        result = true;
+    }
+
+    return result;
   }
 
   @override
@@ -60,8 +111,8 @@ class _EditProjectNamePageWidgetState extends State<EditProjectNamePageWidget> {
                 color: Colors.cyanAccent,
                 size: 25,
               ),
-              onPressed: () {
-                Navigator.pop(context);
+              onPressed: () async {
+                handle();
               },
             ),
           ),

@@ -1,15 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:jira_mobile/objects/user.dart';
 import 'package:jira_mobile/pages/project_details_page.dart';
 import 'package:jira_mobile/pages/project_features_page.dart';
 
+import '../objects/appinfo.dart';
+import '../objects/project.dart';
+
 class SettingsViewWidget extends StatefulWidget {
-  const SettingsViewWidget({Key? key}) : super(key: key);
+  Function refresh_callback;
+  SettingsViewWidget({Key? key, required this.refresh_callback}) : super(key: key);
 
   @override
   _SettingsViewWidgetState createState() => _SettingsViewWidgetState();
 }
 
 class _SettingsViewWidgetState extends State<SettingsViewWidget> {
+  User current_user = GetIt.instance<AppInfo>().current_user;
+  Project current_project = GetIt.instance<AppInfo>().current_project;
+
+  void renew_project() {
+    setState(() {
+      current_project = GetIt.instance<AppInfo>().current_project;
+    });
+    widget.refresh_callback();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -23,7 +39,7 @@ class _SettingsViewWidgetState extends State<SettingsViewWidget> {
         children: [
           InkWell(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ProjectDetailsPageWidget()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ProjectDetailsPageWidget(refresh_callback: renew_project)));
             },
             child: Row(
               mainAxisSize: MainAxisSize.max,
@@ -47,7 +63,7 @@ class _SettingsViewWidgetState extends State<SettingsViewWidget> {
                       size: 25,
                     ),
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProjectDetailsPageWidget()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProjectDetailsPageWidget(refresh_callback: renew_project)));
                     },
                   ),
                 ],

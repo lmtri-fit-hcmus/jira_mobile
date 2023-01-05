@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:jira_mobile/pages/edit_project_key_page.dart';
 import 'package:jira_mobile/pages/edit_project_name_page.dart';
 
-class ProjectDetailsPageWidget extends StatefulWidget {
-  const ProjectDetailsPageWidget({Key? key}) : super(key: key);
+import '../objects/appinfo.dart';
+import '../objects/project.dart';
+import '../objects/user.dart';
 
+class ProjectDetailsPageWidget extends StatefulWidget {
+  Function refresh_callback;
+  ProjectDetailsPageWidget({Key? key, required this.refresh_callback}) : super(key: key);
   @override
   _ProjectDetailsPageWidgetState createState() =>
       _ProjectDetailsPageWidgetState();
@@ -12,6 +17,15 @@ class ProjectDetailsPageWidget extends StatefulWidget {
 
 class _ProjectDetailsPageWidgetState extends State<ProjectDetailsPageWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  User current_user = GetIt.instance<AppInfo>().current_user;
+  Project current_project = GetIt.instance<AppInfo>().current_project;
+
+  void renew_project() {
+    setState(() {
+      current_project = GetIt.instance<AppInfo>().current_project;
+    });
+    widget.refresh_callback();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +81,7 @@ class _ProjectDetailsPageWidgetState extends State<ProjectDetailsPageWidget> {
                             // popup change avatar view
                           },
                           child: Image.network(
-                            'https://picsum.photos/seed/488/600',
+                            current_project.avatar ?? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQB9CZ8U18m1IU3MJH2xex9L6scEJZqTnPECD0XNeaxPo3h_n0kMtCnRjL_Payl8xOPGhw&usqp=CAU',
                             width: 100,
                             height: 100,
                             fit: BoxFit.cover,
@@ -93,7 +107,7 @@ class _ProjectDetailsPageWidgetState extends State<ProjectDetailsPageWidget> {
                     ),
                     InkWell(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => EditProjectNamePageWidget()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => EditProjectNamePageWidget(refresh_callback: renew_project)));
                       },
                       child: Card(
                         clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -117,11 +131,14 @@ class _ProjectDetailsPageWidgetState extends State<ProjectDetailsPageWidget> {
                                       'Project name',
                                       style: TextStyle(
                                         fontFamily: 'Poppins',
-                                        fontWeight: FontWeight.w500,
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
+                                    Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 5),
+                                    ),
                                     Text(
-                                      'my_project_name',
+                                      current_project.name,
                                       style: TextStyle(
                                         fontFamily: 'Poppins',
                                         fontSize: 16,
@@ -138,7 +155,7 @@ class _ProjectDetailsPageWidgetState extends State<ProjectDetailsPageWidget> {
                                   size: 25,
                                 ),
                                 onPressed: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditProjectNamePageWidget()));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditProjectNamePageWidget(refresh_callback: renew_project)));
                                 },
                               ),
                             ],
@@ -148,7 +165,7 @@ class _ProjectDetailsPageWidgetState extends State<ProjectDetailsPageWidget> {
                     ),
                     InkWell(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => EditProjectKeyPageWidget()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => EditProjectKeyPageWidget(refresh_callback: renew_project)));
                       },
                       child: Card(
                         clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -172,11 +189,14 @@ class _ProjectDetailsPageWidgetState extends State<ProjectDetailsPageWidget> {
                                       'Project key',
                                       style: TextStyle(
                                         fontFamily: 'Poppins',
-                                        fontWeight: FontWeight.w500,
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
+                                    Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 5),
+                                    ),
                                     Text(
-                                      'my_project_key',
+                                      current_project.key,
                                       style: TextStyle(
                                         fontFamily: 'Poppins',
                                         fontSize: 16,
@@ -193,7 +213,7 @@ class _ProjectDetailsPageWidgetState extends State<ProjectDetailsPageWidget> {
                                   size: 25,
                                 ),
                                 onPressed: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditProjectKeyPageWidget()));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditProjectKeyPageWidget(refresh_callback: renew_project)));
                                 },
                               ),
                             ],

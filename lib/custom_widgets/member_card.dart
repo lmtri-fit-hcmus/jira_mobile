@@ -49,7 +49,7 @@ class _MemberCardWidgetState extends State<MemberCardWidget> {
                   Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
                     child: Text(
-                      widget.user.username,
+                      widget.user.full_name,
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 16,
