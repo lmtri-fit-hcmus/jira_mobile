@@ -51,7 +51,7 @@ class _CreateEpicPageWidgetState extends State<CreateEpicPageWidget> {
     print('Creating epics: ${project}-${summary}-${description}-${start_date ?? ""}-${due_date ?? ""}-${reporter ?? ""}-${assignee ?? ""}');
     var coll = GetIt.instance<AppDB>().main_db.collection('epics');
     await coll.insertOne(<String, dynamic>{
-      'project': project,
+      'project_id': project,
       'name': summary,
       'description': description,
       'status': status,
@@ -74,11 +74,13 @@ class _CreateEpicPageWidgetState extends State<CreateEpicPageWidget> {
     var coll1 = GetIt.instance<AppDB>().main_db.collection('projects');
     var res1 = await coll1.findOne(md.where.eq('_id', project.id).fields(['members']));
     List ids = res1?['members'] ?? [];
-    var coll2 = GetIt.instance<AppDB>().account_db.collection('account');
+    var coll2 = GetIt.instance<AppDB>().main_db.collection('users');
     List<User> list = [];
     for (var id in ids) {
       coll2.findOne(md.where.eq('_id', id)).then((result) {
-        list.add(User(result['_id'], result['userName'], '','', '', '', '', 0, []));
+        if (result != null) {
+          list.add(User(result['_id'], result['username'], '', result['name'], '', '', result['profile_picture'], 0, []));
+        }
       });
     }
     return list;
@@ -457,7 +459,7 @@ class _CreateEpicPageWidgetState extends State<CreateEpicPageWidget> {
                                     ),
                                   ),
                                   Text(
-                                    pickedAssignee?.username ?? "",
+                                    pickedAssignee?.full_name ?? "",
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
                                       fontSize: 16,
@@ -540,13 +542,13 @@ class _CreateEpicPageWidgetState extends State<CreateEpicPageWidget> {
                                         shape: BoxShape.circle,
                                       ),
                                       child: Image.network(
-                                        'https://picsum.photos/seed/414/600',
+                                        'https://cdn.vectorstock.com/i/preview-1x/32/12/default-avatar-profile-icon-vector-39013212.jpg',
                                         fit: BoxFit.cover,
                                       ),
                                     ),
                                   ),
                                   Text(
-                                    pickedReporter.username??"",
+                                    pickedReporter.name,
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
                                       fontSize: 16,

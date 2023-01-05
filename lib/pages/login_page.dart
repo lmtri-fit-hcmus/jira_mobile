@@ -157,7 +157,7 @@ class _LoginPageState extends State<LoginPage> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              HomeScreen(userId: "63a6ccc438cd7617e0e18e6b")));
+                                              HomeScreen(userId: listAccInf[i].getAccountId())));
                                 });
                                 break;
                               } else {

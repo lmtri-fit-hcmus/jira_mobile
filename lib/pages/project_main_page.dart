@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:jira_mobile/custom_widgets/roadmap_card.dart';
 import 'package:jira_mobile/objects/appdb.dart';
+import 'package:jira_mobile/objects/appinfo.dart';
 import 'package:jira_mobile/objects/epic.dart';
 import 'package:jira_mobile/pages/create_epic_page.dart';
 import 'package:jira_mobile/pages/project_settings_view.dart';
@@ -16,18 +17,15 @@ import '../objects/user.dart';
 
 
 class ProjectMainPageWidget extends StatefulWidget {
-  User current_user;
-  obj.Project current_project;
-
-  ProjectMainPageWidget({super.key, required this.current_user, required this.current_project}) {
-  }
+  const ProjectMainPageWidget({super.key}) ;
   @override
   _ProjectMainPageWidgetState createState() => _ProjectMainPageWidgetState();
 }
 
 class _ProjectMainPageWidgetState extends State<ProjectMainPageWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-
+  User current_user = GetIt.instance<AppInfo>().current_user;
+  obj.Project current_project = GetIt.instance<AppInfo>().current_project;
 
 
   // index of the views in IndexedStack
@@ -53,6 +51,13 @@ class _ProjectMainPageWidgetState extends State<ProjectMainPageWidget> {
     setState(() {
       epics.add(epic);
     });
+  }
+
+  void renew_project() {
+    setState(() {
+      current_project = GetIt.instance<AppInfo>().current_project;
+    });
+    // continue to refresh projects page
   }
 
   final PopupMenuItemBuilder<int> roadmap_MenuItemBuilder = (BuildContext context) => <PopupMenuEntry<int>> [
@@ -145,10 +150,10 @@ class _ProjectMainPageWidgetState extends State<ProjectMainPageWidget> {
 
   Future<List<Epic>> fetchEpics() async {
     var coll = GetIt.instance<AppDB>().main_db.collection('epics');
-    var list = await coll.find(mongodart.where.eq('project', widget.current_project.id)).toList();
+    var list = await coll.find(mongodart.where.eq('project_id', current_project.id)).toList();
     List<Epic> res = [];
     list.forEach((element) {
-      res.add(Epic(element['_id'], element['project'], element['name'] ?? '', element['status'] ?? '', element['description'] ?? '', element['assignee'],
+      res.add(Epic(element['_id'], element['project_id'], element['name'] ?? '', element['status'] ?? '', element['description'] ?? '', element['assignee'],
           element['reporter'], element['start_date'] != null ? DateTime.tryParse(element['start_date']) : null,
           element['due_date'] != null ? DateTime.tryParse(element['due_date']) : null, []));
     });
@@ -184,7 +189,7 @@ class _ProjectMainPageWidgetState extends State<ProjectMainPageWidget> {
           },
         ),
         title: Text(
-          'Project_name',
+          current_project.name,
           style: TextStyle(
             fontFamily: 'Poppins',
             color: Colors.cyanAccent,
@@ -213,7 +218,7 @@ class _ProjectMainPageWidgetState extends State<ProjectMainPageWidget> {
                 switch (selected) {
                   case roadmap_create_ItemValue:
                     print('create epic');
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEpicPageWidget(current_user: widget.current_user, current_project: widget.current_project, callback: add)));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEpicPageWidget(current_user: current_user, current_project: current_project, callback: add)));
                     break;
                   case roadmap_viewmode_ItemValue:
                     print('switch view mode');
@@ -363,12 +368,12 @@ class _ProjectMainPageWidgetState extends State<ProjectMainPageWidget> {
                   child: IndexedStack(
                     index: view_idx,
                     children: [
-                      SettingsViewWidget(), // idx = 0      BOARD VIEW HERE
+                      SettingsViewWidget(refresh_callback: renew_project), // idx = 0      BOARD VIEW HERE
                       RoadmapViewWidget(epic_list: [
 
                       ]),    // idx = 1      BACKLOG VIEW HERE
                       RoadmapViewWidget(epic_list: epics),    // idx = 2
-                      SettingsViewWidget()    // idx = 3
+                      SettingsViewWidget(refresh_callback: renew_project)    // idx = 3
                     ],
                   //),
                 ),
