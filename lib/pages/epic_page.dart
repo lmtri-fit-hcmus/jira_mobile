@@ -58,7 +58,7 @@ class _EpicPageState extends State<EpicPage> {
         _status = setStatus(epicData['status']);
         _startDay = epicData['start_date'];
         _endDay = epicData['due_date'];
-        Future<Map<String,dynamic>> project = MongoDatabase.getProjectMemberId(epicData['project']);
+        Future<Map<String,dynamic>> project = MongoDatabase.getProjectMemberId(epicData['project_id']);
         project.then((projectData) {
           //print("project data is ${projectData.toString()}");
 
@@ -101,7 +101,7 @@ class _EpicPageState extends State<EpicPage> {
   @override
   void initState()  {
     super.initState();
-    _fetchData(_epicId);
+    //_fetchData(_epicId);
   }
   @override
   Widget build(BuildContext context) {
@@ -251,14 +251,13 @@ class _EpicPageState extends State<EpicPage> {
               issueType(Icons.assignment_outlined, "Epic",const  Color.fromARGB(237, 239, 19, 206)),
               pickupDateWidget("Start day", _startDay),
               pickupDateWidget("Due day", _endDay),
-             
+              label("Assignee"),
               Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   InkWell(
                     child:  Column(
                       children: [
-                        label("Assignee"),
                         issueType(Icons.portrait_rounded, _assigneeName,const  Color.fromARGB(217, 132, 1, 239)),
                       ],
                     ),
