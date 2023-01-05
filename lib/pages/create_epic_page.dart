@@ -79,7 +79,7 @@ class _CreateEpicPageWidgetState extends State<CreateEpicPageWidget> {
     for (var id in ids) {
       coll2.findOne(md.where.eq('_id', id)).then((result) {
         if (result != null) {
-          list.add(User(result['_id'], "", result['username'], '', result['name'], '', '', result['profile_picture'], 0, []));
+          list.add(User(result['_id'], result['username'], '', result['name'], '', '', result['profile_picture'], 0, []));
         }
       });
     }
@@ -399,7 +399,7 @@ class _CreateEpicPageWidgetState extends State<CreateEpicPageWidget> {
                               padding: MediaQuery.of(context).viewInsets,
                               child: Container(
                                 height: 250,
-                                child: MemberPickerWidget(users: member_list + [User(md.ObjectId(), '', 'Unassigned', 'Unassigned', 'Unassigned', '', '', '', 0, [])]),
+                                child: MemberPickerWidget(users: member_list + [User(md.ObjectId(), '','', 'Unassigned', 'Unassigned', '', '', 0, [])]),
                               ),
                             );
                           },
@@ -548,7 +548,7 @@ class _CreateEpicPageWidgetState extends State<CreateEpicPageWidget> {
                                     ),
                                   ),
                                   Text(
-                                    pickedReporter.full_name,
+                                    pickedReporter.name,
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
                                       fontSize: 16,

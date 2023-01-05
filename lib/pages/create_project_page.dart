@@ -1,7 +1,6 @@
 import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:jira_mobile/custom_widgets/custom_button.dart';
-import 'package:jira_mobile/models/account_info.dart';
 import 'package:jira_mobile/objects/project.dart';
 import 'package:jira_mobile/pages/home_screen_page.dart';
 import 'package:mongo_dart/mongo_dart.dart' as md;
@@ -101,11 +100,11 @@ class _CreateProjectPage extends State<CreateProject> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.white,
         elevation: 0,
         toolbarHeight: 30,
         leading: BackButton(
-          color: Colors.black,
+          color: Colors.white,
         ),
       ),
       body: SafeArea(

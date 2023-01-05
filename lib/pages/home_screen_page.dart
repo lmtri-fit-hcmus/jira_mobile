@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:community_material_icon/community_material_icon.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footer/footer.dart';
-import 'package:jira_mobile/models/account_info.dart';
 import 'package:jira_mobile/objects/project.dart';
 import 'package:jira_mobile/pages/create_project_page.dart';
 import 'package:jira_mobile/pages/project_backlog.dart';
@@ -193,7 +192,7 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
                                     child: CircularProgressIndicator(),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.only(top: 16),
+                          https://github.com/lmtri-fit-hcmus/jira_mobile/pull/7/conflict?name=lib%252Fpages%252Fhome_screen_page.dart&ancestor_oid=646a74d4d8b7531c5f625964c4e4dc4fdc05f601&base_oid=3c49d4c09bb88ea1bae5099cd747c0ebcdb5e751&head_oid=59783718cbb0a6e0f86282cbee7c873d4a2d0bdf          padding: EdgeInsets.only(top: 16),
                                     child: Text('Awaiting result...'),
                                   ),
                                 ];
@@ -228,7 +227,7 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
                     icon: Icon(
                       CommunityMaterialIcons.home_outline,
                       size: 30,
-                      color: Colors.black
+                      color: Colors.black,
                     ),
                     onPressed: () {},
                   ),

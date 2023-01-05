@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jira_mobile/custom_widgets/custom_button.dart';
-import 'package:jira_mobile/models/account_info.dart';
 import 'package:jira_mobile/networks/account_request.dart';
+import 'package:jira_mobile/objects/user.dart';
 import 'package:jira_mobile/pages/change_password_page.dart';
 import 'package:jira_mobile/pages/home_screen_page.dart';
 import 'package:jira_mobile/pages/project_main_page.dart';
@@ -18,9 +18,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  List<AccountInfo> listAccInf = [];
+  List<User> listAccInf = [];
   fetchAccount() {
-    Future<List<AccountInfo>> res = NetworkRequest.fetchAccoutInfo();
+    Future<List<User>> res = AccountRequest.fetchAccoutInfo();
     res.then((dataFromServer) {
       setState(() {
         listAccInf = dataFromServer;
@@ -49,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     String invalidUsername = "Inavailable username!";
     String invalidPassword = "Password is not correct!";
-    void onFetch() {
+    Future<void> onFetch() async {
       setState(() {
         fetchAccount();
       });
@@ -147,17 +147,17 @@ class _LoginPageState extends State<LoginPage> {
                           int i = 0;
                           print(listAccInf.length);
                           for (; i < listAccInf.length; i++) {
-                            print(listAccInf[i].userName! + listAccInf[i].password!);
-                            if (listAccInf[i].userName == userName) {
+                            print(listAccInf[i].username! + listAccInf[i].password!);
+                            if (listAccInf[i].username == userName) {
                               if (listAccInf[i].password == password) {
                                 setState(() {
                                   errStr = "";
-                                  setAccountID(listAccInf[i].accountId ?? "");
+                                  setAccountID(listAccInf[i].getAccountId() ?? "");
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              HomeScreen(userId: "63a185f5205dbf518ca4ab52")));
+                                              HomeScreen(userId: listAccInf[i].getAccountId())));
                                 });
                                 break;
                               } else {
