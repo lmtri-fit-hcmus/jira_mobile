@@ -4,8 +4,9 @@ import 'package:jira_mobile/objects/sprint.dart';
 import 'package:jira_mobile/objects/epic.dart';
 import 'package:jira_mobile/objects/issue.dart';
 import 'package:jira_mobile/networks/project_request.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-const userId = "63a6ccc438cd7617e0e18e6a";
+import '../values/share_keys.dart';
 
 class BoardTab extends StatefulWidget {
   const BoardTab({super.key});
@@ -19,6 +20,7 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
   List<EpicModel> lsEpic = [];
   List<SprintModel> lsSprint = [];
   List<IssueModel> lsIssue = [];
+  String userId = "";
 
   Future<List<List<IssueModel>>> createData() async {
     List<List<IssueModel>> res = [];
@@ -91,7 +93,12 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
     await getIssueData();
     return await createData();
   }
-
+  getAccountId() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userId = prefs.getString(AppKey.AccountID)??"";
+    });
+  }
   @override
   void initState() {
     pageController = PageController(initialPage: 0);
@@ -285,6 +292,7 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    print(userId);
     // Size pSize = MediaQuery.of(context).size;
     return Container(
       decoration: const BoxDecoration(

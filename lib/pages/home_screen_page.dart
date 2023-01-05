@@ -113,7 +113,7 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
                     context,
                     MaterialPageRoute(
                         builder: (context) => CreateProject(
-                              userId: userId,
+                              userId: widget.userId,
                               projects: projects,
                             )));
               },

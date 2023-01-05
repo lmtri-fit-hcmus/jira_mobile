@@ -3,8 +3,10 @@ import 'package:jira_mobile/objects/project.dart';
 import 'package:jira_mobile/objects/sprint.dart';
 import 'package:jira_mobile/objects/issue.dart';
 import 'package:jira_mobile/networks/project_request.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-const userId = "63a6ccc438cd7617e0e18e6a";
+import '../values/share_keys.dart';
+
 
 class BacklogTab extends StatefulWidget {
   const BacklogTab({super.key});
@@ -20,6 +22,7 @@ class _BacklogTabBuilder extends State<BacklogTab> {
     'story': const Icon(Icons.amp_stories_rounded),
     '': const Icon(Icons.assignment_ind_outlined),
   };
+  String userId = "";
   List<String> actionForActive = ["Complete sprint", "Edit sprint"];
   List<String> actionForInactive = ["Start sprint", "Edit sprint"];
 
@@ -34,6 +37,12 @@ class _BacklogTabBuilder extends State<BacklogTab> {
     await getSprintData();
 
     return await getIssueData();
+  }
+  getAccountId() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userId = prefs.getString(AppKey.AccountID)??"";
+    });
   }
 
   getProjectData() async {
@@ -119,6 +128,11 @@ class _BacklogTabBuilder extends State<BacklogTab> {
     return res;
   }
 
+  @override
+  void initState() {
+    super.initState();
+    getAccountId();
+  }
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
