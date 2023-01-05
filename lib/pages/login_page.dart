@@ -3,6 +3,7 @@ import 'package:jira_mobile/custom_widgets/custom_button.dart';
 import 'package:jira_mobile/models/account_info.dart';
 import 'package:jira_mobile/networks/account_request.dart';
 import 'package:jira_mobile/pages/change_password_page.dart';
+import 'package:jira_mobile/pages/home_screen_page.dart';
 import 'package:jira_mobile/pages/project_main_page.dart';
 import 'package:jira_mobile/pages/signup_page.dart';
 import 'package:jira_mobile/values/share_keys.dart';
@@ -152,11 +153,11 @@ class _LoginPageState extends State<LoginPage> {
                                 setState(() {
                                   errStr = "";
                                   setAccountID(listAccInf[i].accountId ?? "");
-                                  // Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) =>
-                                  //             ProjectMainPageWidget()));
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              HomeScreen(userId: "63a185f5205dbf518ca4ab52")));
                                 });
                                 break;
                               } else {

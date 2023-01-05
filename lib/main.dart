@@ -58,9 +58,10 @@ class JiraMobile extends StatelessWidget {
       //debugShowCheckedModeBanner: false,
       //home: ProjectMainPageWidget()
       //home: const ChangePasswordPage(),
-      home: const HomeScreen(userId: "63a6ccc438cd7617e0e18e6b"),
+      //home: const HomeScreen(userId: "63a6cba638cd7617e0e18e6a"),
       //home: const CreateProject(),
       //home: const BoardTab(),
+      home: LoginPage(),
     );
   }
 }

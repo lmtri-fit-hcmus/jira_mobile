@@ -5,7 +5,7 @@ import 'package:jira_mobile/objects/epic.dart';
 import 'package:jira_mobile/objects/issue.dart';
 import 'package:jira_mobile/networks/project_request.dart';
 
-const userId = "63a6ccc438cd7617e0e18e6b";
+const userId = "63a6ccc438cd7617e0e18e6a";
 
 class BoardTab extends StatefulWidget {
   const BoardTab({super.key});
