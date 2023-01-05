@@ -20,15 +20,28 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
   List<SprintModel> lsSprint = [];
   List<IssueModel> lsIssue = [];
 
-  Future<List<List<IssueModel>>> loadData() async {
-    await getProjectData();
+  Future<List<List<IssueModel>>> createData() async {
+    List<List<IssueModel>> res = [];
 
-    await getSprintData();
-    await getEpicData();
+    List<IssueModel> todo = [];
+    List<IssueModel> done = [];
+    List<IssueModel> inpr = [];
 
-    await getIssueData();
+    for (var s in lsIssue) {
+      if (s.status == "TODO") {
+        todo.add(s);
+      } else if (s.status == "DONE") {
+        done.add(s);
+      } else {
+        inpr.add(s);
+      }
+    }
 
-    return await createData();
+    res.add(todo);
+    res.add(inpr);
+    res.add(done);
+
+    return res;
   }
 
   getProjectData() async {
@@ -65,42 +78,71 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
   }
 
   PageController pageController = PageController();
-  List<String> topic = ["TO DO", "IN PROGRESS", "DONE"];
+  TextEditingController textController = TextEditingController();
+  List<String> topic = ["TODO", "IN PROGRESS", "DONE"];
   List<List<IssueModel>> data = [];
 
   int pageIndex = 0;
 
+  Future<List<List<IssueModel>>> loadData() async {
+    await getProjectData();
+    await getSprintData();
+    await getEpicData();
+    await getIssueData();
+    return await createData();
+  }
+
   @override
   void initState() {
     pageController = PageController(initialPage: 0);
-    //loadData();
+    textController = TextEditingController();
 
     super.initState();
   }
 
-  Future<List<List<IssueModel>>> createData() async {
-    List<List<IssueModel>> res = [];
+  void submit() {
+    Navigator.of(context).pop(textController.text);
 
-    List<IssueModel> todo = [];
-    List<IssueModel> done = [];
-    List<IssueModel> inpr = [];
-
-    for (var s in lsIssue) {
-      if (s.status == "TO DO") {
-        todo.add(s);
-      } else if (s.status == "DONE") {
-        done.add(s);
-      } else {
-        inpr.add(s);
-      }
-    }
-
-    res.add(todo);
-    res.add(inpr);
-    res.add(done);
-
-    return res;
+    textController.clear();
   }
+
+  List<String> statusValue = ["task", "bug", "story"];
+  String dropdownValue = "task";
+
+  Future<String?> openDialog() => showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text("New Issue"),
+          content: TextField(
+            autofocus: true,
+            decoration: const InputDecoration(hintText: "Issue summary"),
+            controller: textController,
+            onSubmitted: (_) => submit(),
+          ),
+          actions: [
+            StatefulBuilder(
+                builder: (BuildContext context, StateSetter dropDownState) {
+              return DropdownButton<String>(
+                value: dropdownValue,
+                icon: const Icon(Icons.arrow_downward),
+                onChanged: (String? value) {
+                  dropDownState(() {
+                    dropdownValue = value!;
+                  });
+                },
+                items:
+                    statusValue.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              );
+            }),
+            TextButton(onPressed: submit, child: const Text("Submit")),
+          ],
+        ),
+      );
 
   List<Card> buildListCard(int id) {
     List<Card> res = <Card>[];
@@ -122,6 +164,125 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
     return res;
   }
 
+  Widget dotIndicator() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List<Widget>.generate(
+        topic.length,
+        (index) => Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: InkWell(
+            onTap: () {
+              pageController.animateToPage(index,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeIn);
+            },
+            child: CircleAvatar(
+              radius: 5,
+              backgroundColor: pageIndex == index
+                  ? const Color.fromARGB(255, 55, 52, 52)
+                  : Colors.grey,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  String findSprintId() {
+    for (var x in lsSprint) {
+      if (x.status == "IN PROGRESS") {
+        return x.getId!.toHexString();
+      }
+    }
+    return "";
+  }
+
+  Widget buildBoardContent() {
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+            child: PageView.builder(
+              controller: pageController,
+              // physics: const ClampingScrollPhysics(),
+              scrollDirection: Axis.horizontal,
+              itemCount: topic.length,
+              onPageChanged: (index) {
+                setState(() {
+                  pageIndex = index;
+                });
+              },
+              itemBuilder: (BuildContext context, int index) {
+                final val = topic[index];
+                return SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        color: const Color.fromARGB(255, 153, 217, 234),
+                        width: double.infinity,
+                        margin: const EdgeInsets.all(4),
+                        child: Column(
+                          children: [
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Text(
+                                val,
+                                style: const TextStyle(fontSize: 20),
+                              ),
+                            ),
+                            ListView(
+                              physics: const ScrollPhysics(),
+                              shrinkWrap: true,
+                              children: buildListCard(index),
+                            ),
+                            TextButton.icon(
+                              style: ElevatedButton.styleFrom(),
+                              onPressed: () async {
+                                final summary = await openDialog();
+                                if (summary == null || summary.isEmpty) {
+                                  return;
+                                }
+                                RequestData.addNewIssue(
+                                        summary, dropdownValue, topic[index])
+                                    .then((String newIssueId) {
+                                  RequestData.addIssueToSprint(
+                                      findSprintId(), newIssueId.toString());
+                                });
+                                setState(() {
+                                  loadData();
+                                });
+                              },
+                              icon: const Icon(
+                                Icons.add,
+                                size: 24.0,
+                                color: Colors.black,
+                              ),
+                              label: const Text(
+                                'Create',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+          dotIndicator(),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // Size pSize = MediaQuery.of(context).size;
@@ -137,107 +298,10 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
           List<Widget> children;
           if (snapshot.hasData) {
             data = snapshot.data!;
-            children = <Widget>[
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      child: PageView.builder(
-                        controller: pageController,
-                        // physics: const ClampingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: topic.length,
-                        onPageChanged: (index) {
-                          setState(() {
-                            pageIndex = index;
-                          });
-                        },
-                        itemBuilder: (BuildContext context, int index) {
-                          final val = topic[index];
-                          return SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  color:
-                                      const Color.fromARGB(255, 153, 217, 234),
-                                  width: double.infinity,
-                                  margin: const EdgeInsets.all(4),
-                                  child: Column(
-                                    children: [
-                                      Align(
-                                        alignment: Alignment.topLeft,
-                                        child: Text(
-                                          val,
-                                          style: const TextStyle(fontSize: 20),
-                                        ),
-                                      ),
-                                      ListView(
-                                        physics: const ScrollPhysics(),
-                                        shrinkWrap: true,
-                                        children: buildListCard(index),
-                                      ),
-                                      TextButton.icon(
-                                        style: ElevatedButton.styleFrom(),
-                                        onPressed: () {
-                                          loadData();
-                                        },
-                                        icon: const Icon(
-                                          Icons.add,
-                                          size: 24.0,
-                                          color: Colors.black,
-                                        ),
-                                        label: const Text(
-                                          'Create',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List<Widget>.generate(
-                        topic.length,
-                        (index) => Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: InkWell(
-                            onTap: () {
-                              pageController.animateToPage(index,
-                                  duration: const Duration(milliseconds: 300),
-                                  curve: Curves.easeIn);
-                            },
-                            child: CircleAvatar(
-                              radius: 5,
-                              backgroundColor: pageIndex == index
-                                  ? const Color.fromARGB(255, 55, 52, 52)
-                                  : Colors.grey,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ];
+            children = <Widget>[buildBoardContent()];
           } else if (snapshot.hasError) {
             children = <Widget>[
-              const Icon(
-                Icons.error_outline,
-                color: Colors.red,
-                size: 60,
-              ),
+              const Icon(Icons.error_outline, color: Colors.red, size: 60),
               Padding(
                 padding: const EdgeInsets.only(top: 16),
                 child: Text('Error: ${snapshot.error}'),
@@ -246,14 +310,10 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
           } else {
             children = const <Widget>[
               SizedBox(
-                width: 60,
-                height: 60,
-                child: CircularProgressIndicator(),
-              ),
+                  width: 60, height: 60, child: CircularProgressIndicator()),
               Padding(
-                padding: EdgeInsets.only(top: 16),
-                child: Text('Awaiting result...'),
-              ),
+                  padding: EdgeInsets.only(top: 16),
+                  child: Text('Awaiting result...')),
             ];
           }
           return Center(
