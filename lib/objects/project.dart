@@ -28,6 +28,10 @@ class ProjectModel {
 
   ObjectId? get getId => _id;
 
+  String? get getName => name;
+
+  String? get getKey => key;
+
   fromJson(Map json) {
     _id = json["_id"];
     name = json["name"];

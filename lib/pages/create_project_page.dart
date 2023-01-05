@@ -9,10 +9,10 @@ import 'package:mongo_dart/mongo_dart.dart' as md;
 class CreateProject extends StatefulWidget {
   // truyen vao thong tin tai khoan (de gan leader)
   // truyen vao cac projects cua account do de ko tao project trung ten/ trung key
-  final AccountInfo accountInfo;
-  final List<Project> projects;
+  final String userId;
+  final List<ProjectModel> projects;
   const CreateProject(
-      {super.key, required this.accountInfo, required this.projects});
+      {super.key, required this.userId, required this.projects});
 
   //const CreateProject({super.key});
   @override
@@ -25,7 +25,7 @@ class _CreateProjectPage extends State<CreateProject> {
   Project _project = Project(md.ObjectId.parse('63a3225cf09342b9f7c080c5'), 'Test project 01', 'PROJ-01', md.ObjectId.parse('63a185f5205dbf518ca4ab52'), null, null, [], []);
   String _projectName = '';
   String _projectKey = '';
-  List<Project> _projects = [];
+  List<ProjectModel> _projects = [];
   String errStr = '';
 
   // add project in db Project: leader = widget.accountInfo.accountId
@@ -38,7 +38,7 @@ class _CreateProjectPage extends State<CreateProject> {
     super.initState();
     // lay projects tu tham so dau vao
     setState(() {
-      _projects = widget.projects;
+      //_projects = widget.projects;
     });
   }
 
