@@ -147,17 +147,22 @@ class _LoginPageState extends State<LoginPage> {
                           int i = 0;
                           print(listAccInf.length);
                           for (; i < listAccInf.length; i++) {
-                            print(listAccInf[i].username! + listAccInf[i].password!);
+                            print(listAccInf[i].username! +
+                                listAccInf[i].password!);
                             if (listAccInf[i].username == userName) {
                               if (listAccInf[i].password == password) {
                                 setState(() {
                                   errStr = "";
-                                  setAccountID(listAccInf[i].getAccountId() ?? "");
-                                  Navigator.push(
+                                  setAccountID(
+                                      listAccInf[i].getAccountId() ?? "");
+                                  Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              HomeScreen(userId: listAccInf[i].getAccountId())));
+                                          builder: (context) => HomeScreen(
+                                                userId: listAccInf[i]
+                                                    .getAccountId(),
+                                              )),
+                                      (route) => false);
                                 });
                                 break;
                               } else {
