@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:jira_mobile/custom_widgets/custom_button.dart';
-import 'package:jira_mobile/models/account_info.dart';
 import 'package:jira_mobile/networks/account_request.dart';
 import 'package:jira_mobile/values/share_keys.dart';
 import 'package:password_text_field/password_text_field.dart';
@@ -115,9 +114,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 print("cur $currentPass");
                 print("new $newPass");
                 print("re $reEnterPass");
-                NetworkRequest.fetchAccoutInfo().then((dataFromServer) {
+                AccountRequest.fetchAccoutInfo().then((dataFromServer) {
                   dataFromServer.forEach((element) {
-                    if (element.accountId == accountId) {
+                    if (element.getAccountId() == accountId) {
                       if (currentPass != element.password) {
                         setState(() {
                           errType = 0;
@@ -139,7 +138,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                           errType = 4; //change success!
                         });
 
-                        NetworkRequest.changePasswordRequest(
+                        AccountRequest.changePasswordRequest(
                                 accountId ?? "", newPass, dataFromServer)
                             .then((value) {
                           print("after send");

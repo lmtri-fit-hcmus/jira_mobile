@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:community_material_icon/community_material_icon.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footer/footer.dart';
-import 'package:jira_mobile/models/account_info.dart';
 import 'package:jira_mobile/objects/project.dart';
 import 'package:jira_mobile/pages/create_project_page.dart';
 import 'package:jira_mobile/pages/project_backlog.dart';
@@ -245,7 +244,7 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
                     icon: Icon(
                       CommunityMaterialIcons.home_outline,
                       size: 30,
-                      color: Colors.primaryColor,
+                      color: Colors.black,
                     ),
                     onPressed: () {},
                   ),
@@ -253,7 +252,7 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
                       padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
                       child: Text('Home',
                           style: TextStyle(
-                            color: Colors.primaryColor,
+                            color: Colors.black,
                             fontWeight: FontWeight.w500,
                           )))
                 ],

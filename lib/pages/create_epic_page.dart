@@ -78,7 +78,7 @@ class _CreateEpicPageWidgetState extends State<CreateEpicPageWidget> {
     List<User> list = [];
     for (var id in ids) {
       coll2.findOne(md.where.eq('_id', id)).then((result) {
-        list.add(User(result['_id'], result['accountId'], result['userName'], '', '', '', '', '', 0, []));
+        list.add(User(result['_id'], result['userName'], '','', '', '', '', 0, []));
       });
     }
     return list;
@@ -397,7 +397,7 @@ class _CreateEpicPageWidgetState extends State<CreateEpicPageWidget> {
                               padding: MediaQuery.of(context).viewInsets,
                               child: Container(
                                 height: 250,
-                                child: MemberPickerWidget(users: member_list + [User(md.ObjectId(), '', 'Unassigned', 'Unassigned', '', '', '', '', 0, [])]),
+                                child: MemberPickerWidget(users: member_list + [User(md.ObjectId(), '','', 'Unassigned', 'Unassigned', '', '', 0, [])]),
                               ),
                             );
                           },
@@ -546,7 +546,7 @@ class _CreateEpicPageWidgetState extends State<CreateEpicPageWidget> {
                                     ),
                                   ),
                                   Text(
-                                    pickedReporter.username,
+                                    pickedReporter.username??"",
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
                                       fontSize: 16,

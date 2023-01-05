@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:jira_mobile/dbhelper/mongodb.dart';
-import 'package:jira_mobile/models/account_info.dart';
 import 'package:jira_mobile/objects/appdb.dart';
 import 'package:jira_mobile/pages/change_password_page.dart';
 import 'package:jira_mobile/pages/epic_page.dart';
@@ -47,9 +46,10 @@ class JiraMobile extends StatelessWidget {
       //   current_user: User(ObjectId.parse('63a185f5205dbf518ca4ab52'),"tri.le", "tri.le", "11111111", "full name", "email", "phone", "", 0.0, []),
       //   current_project: custom.Project(ObjectId.parse('63a3225cf09342b9f7c080c5'), 'Test project 01', 'PROJ-01', ObjectId.parse('63a185f5205dbf518ca4ab52'), null, null, [], []))
       //home: const ChangePasswordPage(),
-      home: const HomeScreen(userId: "63a185f5205dbf518ca4ab52"),
+      //home: const HomeScreen(userId: "63a185f5205dbf518ca4ab52"),
       //home: const CreateProject(),
       //home: const BoardTab(),
+      home: LoginPage()
     );
   }
 }

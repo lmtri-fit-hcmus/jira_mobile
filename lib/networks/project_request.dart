@@ -34,7 +34,7 @@ class RequestData {
   }
 
   static Future<DbCollection> loadCollection(String collectionName) async {
-    _instance ??= RequestData();
+    _instance ??= await RequestData();
     _instance!.db = await _instance!.getConnection();
     var coll = _instance!.db!.collection(collectionName);
     return coll;
