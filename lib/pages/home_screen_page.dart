@@ -245,7 +245,7 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
                     icon: Icon(
                       CommunityMaterialIcons.home_outline,
                       size: 30,
-                      color: Colors.primaryColor,
+                      color: Colors.black
                     ),
                     onPressed: () {},
                   ),
@@ -253,7 +253,7 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
                       padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
                       child: Text('Home',
                           style: TextStyle(
-                            color: Colors.primaryColor,
+                            color: Colors.black,
                             fontWeight: FontWeight.w500,
                           )))
                 ],

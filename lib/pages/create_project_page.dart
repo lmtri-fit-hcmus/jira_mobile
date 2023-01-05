@@ -22,7 +22,7 @@ class CreateProject extends StatefulWidget {
 }
 
 class _CreateProjectPage extends State<CreateProject> {
-  Project _project = Project(md.ObjectId.parse('63a3225cf09342b9f7c080c5'), 'Test project 01', 'PROJ-01', md.ObjectId.parse('63a185f5205dbf518ca4ab52'), null, null, [], []);
+  Project _project = Project(md.ObjectId.parse('63a3225cf09342b9f7c080c5'), 'Test project 01', 'PROJ-01', md.ObjectId.parse('63a6ccc438cd7617e0e18e6b'), null, null, [], []);
   String _projectName = '';
   String _projectKey = '';
   List<ProjectModel> _projects = [];
