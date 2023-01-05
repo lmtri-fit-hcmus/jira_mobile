@@ -20,6 +20,8 @@ class _BacklogTabBuilder extends State<BacklogTab> {
     'story': const Icon(Icons.amp_stories_rounded),
     '': const Icon(Icons.assignment_ind_outlined),
   };
+  List<String> actionForActive = ["Complete sprint", "Edit sprint"];
+  List<String> actionForInactive = ["Start sprint", "Edit sprint"];
 
   Map<SprintModel, List<IssueModel>> issueOfSprint =
       <SprintModel, List<IssueModel>>{};
@@ -82,14 +84,34 @@ class _BacklogTabBuilder extends State<BacklogTab> {
   }
 
   List<Widget> buidlExpansionTile() {
-    loadData();
     List<Widget> res = <Widget>[];
 
     issueOfSprint.forEach((key, value) {
+      List<String> action = (key.status.toString() == "TODO")
+          ? actionForInactive
+          : actionForActive;
       res.add(ExpansionTile(
         title: Text(key.name.toString()),
         subtitle: Text("${value.length} issue"),
         controlAffinity: ListTileControlAffinity.leading,
+        trailing: DropdownButtonHideUnderline(
+          child: DropdownButton(
+            items: action.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            icon: const Icon(Icons.more_vert),
+            onChanged: (value) {
+              RequestData.changeStatusSprint(
+                  value.toString(), key.getId!.toHexString());
+              setState(() {
+                loadData();
+              });
+            },
+          ),
+        ),
         children: buildListTile(value),
       ));
     });

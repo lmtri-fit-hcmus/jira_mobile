@@ -56,6 +56,32 @@ class RequestData {
     return ls;
   }
 
+  static Future<String> addNewIssue(
+      String summary, String type, String status) async {
+    var coll = await loadCollection('issues');
+    var objId = ObjectId();
+    IssueModel newIssue = IssueModel.withName(objId, summary, type, status);
+    await coll.insert(newIssue.toMap());
+    return objId.toHexString();
+  }
+
+  static Future<void> addIssueToSprint(String sprintId, String issueId) async {
+    var coll = await loadCollection('sprint_issue');
+    var objId = stringToObjId(issueId);
+
+    await coll.modernUpdate(where.eq('sprint_id', stringToObjId(sprintId)),
+        ModifierBuilder().push('issues', objId));
+  }
+
+  static Future<void> changeStatusSprint(String cmd, String sprintId) async {
+    var updateValue = cmd.startsWith("Start") ? "IN PROGRESS" : "DONE";
+
+    var coll = await loadCollection('sprints');
+    await coll.updateOne(where.eq('_id', stringToObjId(sprintId)),
+        modify.set('status', updateValue));
+  }
+
+
   static Future<List<SprintModel>> getMySprint(String projectId) async {
     List<SprintModel> ls = [];
     var coll = await loadCollection('sprints');

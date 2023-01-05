@@ -42,6 +42,9 @@ class IssueModel {
   Timestamp? startDate;
   Timestamp? dueDate;
 
+  IssueModel();
+  IssueModel.withName(this._id, this.name, this.issueType, this.status);
+
   ObjectId? get getId => _id;
 
   fromJson(Map json) {
