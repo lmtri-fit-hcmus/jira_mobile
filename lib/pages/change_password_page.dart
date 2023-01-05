@@ -6,8 +6,7 @@ import 'package:password_text_field/password_text_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChangePasswordPage extends StatefulWidget {
-  final void Function() onFet;
-  const ChangePasswordPage({super.key, required this.onFet});
+  const ChangePasswordPage({super.key});
 
   @override
   State<ChangePasswordPage> createState() => _ChangePasswordPageState();
@@ -49,7 +48,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   x() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      accountId = prefs.getString(AppKey.AccountID);
+      accountId = prefs.getString(AppKey.accountId);
     });
   }
 
@@ -83,76 +82,81 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           style: TextStyle(color: Colors.black),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 20,
-            ),
-            selfDefine_TextInput(
-              title: "Current password",
-              setText: setCurPas,
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            selfDefine_TextInput(title: "New password", setText: setNewPas),
-            selfDefine_TextInput(
-                title: "Re-enter new password", setText: setRePas),
-            Container(
-              padding: const EdgeInsets.only(left: 20),
-              alignment: Alignment.centerLeft,
-              height: 30,
-              child: Text(
-                listErrorStr[errType],
-                style: TextStyle(color: Colors.red),
+      body: Container(
+        margin: EdgeInsets.only(left: 15, right: 15),
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+             
+              selfDefine_TextInput(
+                title: "Current password",
+                setText: setCurPas,
               ),
-            ),
-            InkWell(
-              
-              onTap: () {
-                print("cur $currentPass");
-                print("new $newPass");
-                print("re $reEnterPass");
-                AccountRequest.fetchAccoutInfo().then((dataFromServer) {
-                  dataFromServer.forEach((element) {
-                    if (element.getAccountId() == accountId) {
-                      if (currentPass != element.password) {
-                        setState(() {
-                          errType = 0;
-                        });
-                      } else if (newPass != reEnterPass) {
-                        setState(() {
-                          errType = 1;
-                        });
-                      } else if (newPass.length < 8) {
-                        setState(() {
-                          errType = 2;
-                        });
-                      } else if (currentPass == newPass) {
-                        setState(() {
-                          errType = 3;
-                        });
-                      } else {
-                        setState(() {
-                          errType = 4; //change success!
-                        });
+              SizedBox(
+                height: 20,
+              ),
+              selfDefine_TextInput(title: "New password", setText: setNewPas),
+               SizedBox(
+                height: 20,
+              ),
+              selfDefine_TextInput(
+                  title: "Re-enter new password", setText: setRePas),
+              Container(
+                padding: const EdgeInsets.only(left: 20),
+                alignment: Alignment.centerLeft,
+                height: 30,
+                child: Text(
+                  listErrorStr[errType],
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 30,right: 30),
+                child: InkWell(
+                  
+                  onTap: () {
+                    print("cur $currentPass");
+                    print("new $newPass");
+                    print("re $reEnterPass");
+                    AccountRequest.fetchAccoutInfo().then((dataFromServer) {
+                      dataFromServer.forEach((element) {
+                        if (element.getAccountId() == accountId) {
+                          if (currentPass != element.password) {
+                            setState(() {
+                              errType = 0;
+                            });
+                          } else if (newPass != reEnterPass) {
+                            setState(() {
+                              errType = 1;
+                            });
+                          } else if (newPass.length < 8) {
+                            setState(() {
+                              errType = 2;
+                            });
+                          } else if (currentPass == newPass) {
+                            setState(() {
+                              errType = 3;
+                            });
+                          } else {
+                            setState(() {
+                              errType = 4; //change success!
+                            });
 
-                        AccountRequest.changePasswordRequest(
-                                accountId ?? "", newPass, dataFromServer)
-                            .then((value) {
-                          print("after send");
-                          widget.onFet();
-                          Navigator.pop(context);
-                        });
-                      }
-                    }
-                  });
-                });
-              },
-              child: CustomButtonView(title: "Save"),
-            )
-          ],
+                            AccountRequest.changePasswordRequest(
+                                    accountId ?? "", newPass, dataFromServer)
+                                .then((value) {
+                              Navigator.pop(context);
+                            });
+                          }
+                        }
+                      });
+                    });
+                  },
+                  child: CustomButtonView(title: "Save"),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

@@ -4,6 +4,7 @@ import 'package:jira_mobile/objects/sprint.dart';
 import 'package:jira_mobile/objects/epic.dart';
 import 'package:jira_mobile/objects/issue.dart';
 import 'package:jira_mobile/networks/project_request.dart';
+import 'package:jira_mobile/pages/issue_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../values/share_keys.dart';
@@ -96,7 +97,7 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
   getAccountId() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      userId = prefs.getString(AppKey.AccountID)??"";
+      userId = prefs.getString(AppKey.accountId)??"";
     });
   }
   @override
@@ -151,7 +152,7 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
         ),
       );
 
-  List<Card> buildListCard(int id) {
+  List<Card> buildListCard(int id, BuildContext context) {
     List<Card> res = <Card>[];
     for (var val in data[id]) {
       res.add(
@@ -162,7 +163,13 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
               style: const TextStyle(fontSize: 15),
             ),
             onTap: () {
-              // i.getId == issueId
+              Navigator.push(context,
+              MaterialPageRoute(
+                builder: (context) {
+                return const IssuePage();
+              },
+                settings: RouteSettings(arguments: val.getId)),
+              );
             },
           ),
         ),
@@ -206,6 +213,7 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
   }
 
   Widget buildBoardContent() {
+    print("board id: $userId");
     return Expanded(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -243,7 +251,7 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
                             ListView(
                               physics: const ScrollPhysics(),
                               shrinkWrap: true,
-                              children: buildListCard(index),
+                              children: buildListCard(index,context),
                             ),
                             TextButton.icon(
                               style: ElevatedButton.styleFrom(),

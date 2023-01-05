@@ -10,6 +10,7 @@ import 'package:jira_mobile/pages/login_page.dart';
 import 'package:jira_mobile/pages/create_project_page.dart';
 import 'package:jira_mobile/pages/login_page.dart';
 import 'package:jira_mobile/pages/home_screen_page.dart';
+import 'package:jira_mobile/pages/profile_page.dart';
 import 'package:jira_mobile/pages/project_board.dart';
 import 'package:jira_mobile/pages/project_main_page.dart';
 import 'package:mongo_dart/mongo_dart.dart';
@@ -60,6 +61,7 @@ class JiraMobile extends StatelessWidget {
       //home: const HomeScreen(userId: "63a185f5205dbf518ca4ab52"),
       //home: const CreateProject(),
       //home: const BoardTab(),
+      //home: ProfilePage()
       home: LoginPage()
     );
   }

@@ -8,6 +8,8 @@ import 'package:jira_mobile/objects/appdb.dart';
 import 'package:jira_mobile/objects/appinfo.dart';
 import 'package:jira_mobile/objects/epic.dart';
 import 'package:jira_mobile/pages/create_epic_page.dart';
+import 'package:jira_mobile/pages/project_backlog.dart';
+import 'package:jira_mobile/pages/project_board.dart';
 import 'package:jira_mobile/pages/project_settings_view.dart';
 import 'package:jira_mobile/pages/roadmap_view.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mongodart;
@@ -172,6 +174,9 @@ class _ProjectMainPageWidgetState extends State<ProjectMainPageWidget> {
   
   @override
   Widget build(BuildContext context) {
+    print(current_user.id);
+    print(current_project.id);
+    print(epics);
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
@@ -368,10 +373,8 @@ class _ProjectMainPageWidgetState extends State<ProjectMainPageWidget> {
                   child: IndexedStack(
                     index: view_idx,
                     children: [
-                      SettingsViewWidget(refresh_callback: renew_project), // idx = 0      BOARD VIEW HERE
-                      RoadmapViewWidget(epic_list: [
-
-                      ]),    // idx = 1      BACKLOG VIEW HERE
+                      BoardTab(), // idx = 0      BOARD VIEW HERE
+                      BacklogTab(),    // idx = 1      BACKLOG VIEW HERE
                       RoadmapViewWidget(epic_list: epics),    // idx = 2
                       SettingsViewWidget(refresh_callback: renew_project)    // idx = 3
                     ],

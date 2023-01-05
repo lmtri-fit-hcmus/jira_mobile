@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:community_material_icon/community_material_icon.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footer/footer.dart';
+import 'package:get_it/get_it.dart';
 import 'package:jira_mobile/objects/project.dart';
 import 'package:jira_mobile/pages/create_project_page.dart';
+import 'package:jira_mobile/pages/profile_page.dart';
 import 'package:jira_mobile/pages/project_backlog.dart';
+import 'package:jira_mobile/pages/project_main_page.dart';
+import 'package:mongo_dart/mongo_dart.dart' as mg;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jira_mobile/networks/project_request.dart';
 
+import '../objects/appinfo.dart';
 import '../values/share_keys.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -46,6 +51,7 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.userId);
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
@@ -59,7 +65,9 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
             elevation: 5,
             child: InkWell(
                 onTap: () {
-                  // next: detail_project_page, input eachProject
+                  GetIt.instance<AppInfo>().current_project = Project(eachProject.getId??mg.ObjectId.fromHexString(""), eachProject.name??"", eachProject.key??"", eachProject.leader??mg.ObjectId.fromHexString("")
+                  , eachProject.avatar, null, [], []);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ProjectMainPageWidget()));    
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -126,7 +134,10 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
                 color: Colors.black,
               ),
               // profile
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
+                      
+              },
             )
           ],
         ),

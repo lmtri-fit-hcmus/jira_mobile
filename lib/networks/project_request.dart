@@ -43,6 +43,8 @@ class RequestData {
   static Future<List<ProjectModel>> getMyProjects(String userId) async {
     var coll = await loadCollection('projects').then((value) => value);
     List<ProjectModel> ls = [];
+    if(userId == "")
+      return ls;
     await coll.find(where).forEach(
       (element) {
         ProjectModel ref = ProjectModel();
