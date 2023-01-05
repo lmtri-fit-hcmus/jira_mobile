@@ -24,34 +24,17 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
-  // AccountInfo _accountInfo =
-  //     AccountInfo(accountId: '', userName: '', password: '');
-  // String? accountId = '';
-  // // Project _project = Project(name: '', key: '');
-  // List<Project> _projects = [
-  //   // Project(name: 'huy1', key: 'huyhuy'),
-  //   // Project(name: 'huy2', key: 'huyhuy'),
-  //   // Project(name: 'huy3', key: 'huyhuy'),
-  //   // Project(name: 'huy4', key: 'huyhuy'),
-  //   // Project(name: 'huy5', key: 'huyhuy'),
-  //   // Project(name: 'huy6', key: 'huyhuy'),
-  //   // Project(name: 'huy7', key: 'huyhuy'),
-  //   // Project(name: 'huy8', key: 'huyhuy'),
-  //   // Project(name: 'huy9', key: 'huyhuy'),
-  //   // Project(name: 'huy10', key: 'huyhuy'),
-  //   // Project(name: 'huy11', key: 'huyhuy'),
-  //   // Project(name: 'huy12', key: 'huyhuy')
-  // ];
 
   List<ProjectModel> projects = [];
 
   Future<List<ProjectModel>> loadData() async {
+    print(widget.userId);
     return await getProjectData();
   }
   
   Future<List<ProjectModel>> getProjectData() async {
     List<ProjectModel> res = [];
-    res = await RequestData.getMyProjects(userId);
+    res = await RequestData.getMyProjects(widget.userId);
     return res;
   }
 
@@ -59,7 +42,6 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    // pageController = PageController();
     super.initState();
   }
 
@@ -85,10 +67,10 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
                       border: Border(
                           bottom: BorderSide(color: Colors.black, width: 1))),
                   child: ListTile(
-                    leading: const Icon(
-                        CommunityMaterialIcons.notebook_edit_outline,
-                        size: 40,
-                        color: Colors.black),
+                    leading: Image.network(
+                      eachProject.avatar.toString(),
+                      width: 40,
+                    ),
                     title: Text(
                       eachProject.getName.toString(),
                       style: TextStyle(
@@ -185,6 +167,7 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
                               if (snapshot.hasData) {
                                 print('has data');
                                 projects = snapshot.data!;
+                                print(projects.length.toString() + 'huy');
                                 children = buildProjectsList();
                               }
                               else if (snapshot.hasError) {
