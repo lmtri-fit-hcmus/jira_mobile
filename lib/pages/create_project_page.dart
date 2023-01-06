@@ -1,9 +1,14 @@
 import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 import 'package:jira_mobile/custom_widgets/custom_button.dart';
+import 'package:jira_mobile/networks/project_request.dart';
 import 'package:jira_mobile/objects/project.dart';
 import 'package:jira_mobile/pages/home_screen_page.dart';
 import 'package:mongo_dart/mongo_dart.dart' as md;
+
+import '../objects/appdb.dart';
 
 class CreateProject extends StatefulWidget {
   // truyen vao thong tin tai khoan (de gan leader)
@@ -21,15 +26,38 @@ class CreateProject extends StatefulWidget {
 }
 
 class _CreateProjectPage extends State<CreateProject> {
-  Project _project = Project(md.ObjectId.parse('63a3225cf09342b9f7c080c5'), 'Test project 01', 'PROJ-01', md.ObjectId.parse('63a6ccc438cd7617e0e18e6b'), null, null, [], []);
-  String _projectName = '';
-  String _projectKey = '';
+  // Project project = Project(md.ObjectId.parse('63a3225cf09342b9f7c080c5'), 'Test project 01', 'PROJ-01', md.ObjectId.parse('63a6ccc438cd7617e0e18e6b'), null, null, [], []);
+  String projectName = '';
+  String projectKey = '';
+  DateTime? datePicked;
   List<ProjectModel> _projects = [];
   String errStr = '';
 
   // add project in db Project: leader = widget.accountInfo.accountId
-  addProject(Project project) {
-    // to do
+  void createProject() async {
+    var name = projectName;
+    var key = projectKey;
+    var avatar = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTq8lnfQkQZioZCMqDjQrRaU7r438bhXKGtgQ&usqp=CAU";
+    var leader = stringToObjId(widget.userId);
+    var start_date = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    var members = [stringToObjId(widget.userId)];
+
+    var coll = GetIt.instance<AppDB>().main_db.collection('projects');
+    await coll.insertOne(<String, dynamic>{
+      'name' : name,
+      'key' : key,
+      'avatar' : avatar,
+      'leader' : leader,
+      'start_date' : start_date,
+      'members' : members
+    }).then((value) => {
+      if (value.isSuccess) {
+        print('success!')
+      }
+      else {
+        print('error!')
+      }
+    });
   }
 
   @override
@@ -55,16 +83,16 @@ class _CreateProjectPage extends State<CreateProject> {
         "Project key is empty. Please enter your project key";
 
     // xu li create project
-    void _checkNewProject() {
+    void checkNewProject() {
       errStr = '';
       // check empty
-      if (_projectName.isEmpty) {
+      if (projectName.isEmpty) {
         setState(() {
           errStr = projectNameEmpty;
         });
         return;
       }
-      if (_projectKey.isEmpty) {
+      if (projectKey.isEmpty) {
         setState(() {
           errStr = projectKeyEmpty;
         });
@@ -72,13 +100,13 @@ class _CreateProjectPage extends State<CreateProject> {
       }
       // check existed
       int i = 0;
-      for (; i < _projects.length; i++) {
-        if (_projects[i].name == _projectName) {
+      for (; i < widget.projects.length; i++) {
+        if (widget.projects[i].name == projectName) {
           setState(() {
             errStr = projectNameExisted;
           });
           break;
-        } else if (_projects[i].key == _projectKey) {
+        } else if (widget.projects[i].key == projectKey) {
           setState(() {
             errStr = projectKeyExisted;
           });
@@ -87,24 +115,21 @@ class _CreateProjectPage extends State<CreateProject> {
       }
       print(errStr);
       // name and key OK
-      if (i == _projects.length && errStr == '') {
+      if (i == widget.projects.length && errStr == '') {
         // add project for account (leader = accountInfo.ID) and back previous page
-        _project.name = _projectName;
-        _project.key = _projectKey;
-        addProject(_project);
+        createProject();
         // next: detail_project_page
-        print('create project success');
       }
     }
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.black,
         elevation: 0,
         toolbarHeight: 30,
         leading: BackButton(
-          color: Colors.white,
+          color: Colors.black,
         ),
       ),
       body: SafeArea(
@@ -133,7 +158,7 @@ class _CreateProjectPage extends State<CreateProject> {
               child: TextField(
                 onChanged: (value) {
                   setState(() {
-                    _projectName = value;
+                    projectName = value;
                   });
                 },
                 decoration: InputDecoration(
@@ -150,7 +175,7 @@ class _CreateProjectPage extends State<CreateProject> {
               child: TextField(
                 onChanged: (value) {
                   setState(() {
-                    _projectKey = value;
+                    projectKey = value;
                   });
                 },
                 decoration: InputDecoration(
@@ -180,7 +205,7 @@ class _CreateProjectPage extends State<CreateProject> {
               child: InkWell(
                 onTap: () {
                   // check projectName and projectKey -> add db project
-                  _checkNewProject();
+                  checkNewProject();
                 },
                 child: CustomButtonView(title: 'Create'),
               ),

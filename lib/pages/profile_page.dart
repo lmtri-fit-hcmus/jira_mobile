@@ -70,18 +70,16 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       body: Container(
         child: Stack(children: [
-          Center(
-            child: Column(
-              children: [
+         
                 Container(
                   child: Image.asset('assets/images/entry/bkgr.png'),
                 ),
                 Container(
                   child: Image.asset('assets/images/entry/circle.png'),
                 ),
-              ],
-            ),
-          ),
+              
+            
+          
           Column(
             children: [
               Column(children: [
@@ -89,7 +87,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Column(
                     children: [
                       Container(
-                        margin: EdgeInsets.only(top: 200, bottom: 5),
+                        margin: EdgeInsets.only(top: 150, bottom: 5),
                         height: 100,
                         width: 100,
                         decoration: BoxDecoration(
@@ -105,14 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
-                      Container(
-                          margin: EdgeInsets.only(top: 5),
-                          child: Text(
-                            '@$accountId',
-                            style: TextStyle(
-                              color: Color.fromARGB(0, 31, 105, 110),
-                            ),
-                          )),
+                      
                     ],
                   ),
                 ),
