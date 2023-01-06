@@ -66,7 +66,9 @@ class _IssuePageState extends State<IssuePage> {
                         for (int i = 0; i < value.length; i++){
                           _listMemberUser.add(value[i]['name']);
                           if(value[i]['_id'] == issueData['assignee']) {
-                            _assigneeName = value[i]['name'];
+                            setState(() {
+                              _assigneeName = value[i]['name'];
+                            });
                           }
                         }
                     }
@@ -98,7 +100,9 @@ class _IssuePageState extends State<IssuePage> {
                           for (int i = 0; i < value.length; i++){
                             _listMemberUser.add(value[i]['name']);
                             if(value[i]['_id'] == issueData['assignee']) {
+                              setState(() {
                               _assigneeName = value[i]['name'];
+                              });
                             }
                           }
                       }

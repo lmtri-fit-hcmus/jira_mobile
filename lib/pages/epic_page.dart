@@ -52,7 +52,7 @@ class _EpicPageState extends State<EpicPage> {
     Future<Map<String,dynamic>?> epic = MongoDatabase.getEpic(id);
     epic.then((epicData) {
         setState(() {
-        //print("epic data is: ${epicData.toString()}");
+        print("epic data is: ${epicData.toString()}");
         if(epicData != null) {
           
         
@@ -62,19 +62,21 @@ class _EpicPageState extends State<EpicPage> {
         _endDay = epicData['due_date'];
         Future<Map<String,dynamic>?> project = MongoDatabase.getProjectMemberIdByEpic(epicData['project_id']);
         project.then((projectData) {
-          //print("project data is ${projectData.toString()}");
+          print("project data is ${projectData.toString()}");
           if(projectData != null) {
             for(int i = 0; i < projectData['members'].length; i++) {
                 _listMemberId.add(projectData['members'][i] as mongodb.ObjectId);
             }
             
             MongoDatabase.getListMemberInProject(_listMemberId).then((value) {
-                //print("list member is : ${value.toString()}");
+                print("list member is : ${value.toString()}");
 
                 for (int i = 0; i < value.length; i++){
                   _listMemberUser.add(value[i]['name']);
                   if(value[i]['_id'] == epicData['assignee']) {
-                    _assigneeName = value[i]['name'];
+                    setState(() {
+                      _assigneeName = value[i]['name'];
+                    });
                   }
                 }
             });  
