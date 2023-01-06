@@ -51,35 +51,19 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: false,
-      appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 54, 150, 142),
-        elevation: 0,
-        leading: InkWell(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: Icon(
-            Icons.arrow_back,
-            color: Colors.black,
-          ),
-        ),
-        title: Text(
-          'Profile Page',
-          style: TextStyle(color: Colors.black),
-        ),
-      ),
+      
       body: Container(
         child: Stack(children: [
-         
-                Container(
-                  child: Image.asset('assets/images/entry/bkgr.png'),
-                ),
-                Container(
-                  child: Image.asset('assets/images/entry/circle.png'),
-                ),
-              
-            
           
+          Container(
+            child: Image.asset('assets/images/entry/bkgr.png'),
+          ),
+          Container(
+            child: Image.asset('assets/images/entry/circle.png'),
+          ),
+          Container(
+            child: IconButton(icon: Icon(Icons.arrow_back), onPressed: (){Navigator.pop(context);},),
+          ),
           Column(
             children: [
               Column(children: [
@@ -103,7 +87,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
-                      
                     ],
                   ),
                 ),
@@ -114,28 +97,27 @@ class _ProfilePageState extends State<ProfilePage> {
             flex: 1,
             child: Column(children: [
               Expanded(flex: 4, child: Container()),
-              Expanded(flex: 2, child: Container(
-                child: Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(top: 10, bottom: 5),
-                      child: Text("@$username")
+              Expanded(
+                  flex: 2,
+                  child: Container(
+                      child: Column(
+                    children: [
+                      Container(
+                          margin: EdgeInsets.only(top: 10, bottom: 5),
+                          child: Text("@$username")),
+                      Container(
+                        margin: EdgeInsets.all(5),
+                        child: Text("Email: $email"),
                       ),
                       Container(
-                      margin: EdgeInsets.all(5),
-                      child: Text("Email: $email"),
+                        margin: EdgeInsets.all(5),
+                        child: Text("Phone Number: $phone"),
                       ),
                       Container(
-                      margin: EdgeInsets.all(5),
-                      child: Text("Phone Number: $phone"),
-                      ),
-                      Container(
-                      margin: EdgeInsets.all(5),
-                      child: Text("Time Performance: $time_performance")
-                      ),   
-                  ],
-                )
-              )),
+                          margin: EdgeInsets.all(5),
+                          child: Text("Time Performance: $time_performance")),
+                    ],
+                  ))),
               Expanded(
                 flex: 2,
                 child: ListView(
