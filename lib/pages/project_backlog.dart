@@ -7,12 +7,11 @@ import 'package:jira_mobile/objects/issue.dart';
 import 'package:jira_mobile/networks/project_request.dart';
 import 'package:jira_mobile/pages/issue_page.dart';
 
-import '../values/share_keys.dart';
-
 const userId = "63a185f5205dbf518ca4ab52";
 
 class BacklogTab extends StatefulWidget {
-  const BacklogTab({super.key});
+  final String userId;
+  const BacklogTab({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<BacklogTab> createState() => _BacklogTabBuilder();
@@ -47,6 +46,7 @@ class _BacklogTabBuilder extends State<BacklogTab> {
   }
 
   getSprintData() async {
+    lsSprint.clear();
     for (var prj in lsPrj) {
       List<SprintModel> res =
           await RequestData.getMySprint(prj.getId!.toHexString());
@@ -113,7 +113,6 @@ class _BacklogTabBuilder extends State<BacklogTab> {
     });
 
     issueOfSprint.forEach((key, value) {
-      log(key.status.toString());
       List<String> action = (key.status.toString() == "TODO")
           ? actionForInactive
           : actionForActive;
@@ -134,7 +133,10 @@ class _BacklogTabBuilder extends State<BacklogTab> {
               changeSprint(value.toString(), key.getId!.toHexString());
 
               setState(() {
-                _listFuture = null;
+                //_listFuture = null;
+                issueOfSprint.clear();
+
+                // TODO handle right data
                 _listFuture = loadData();
               });
             },
@@ -159,15 +161,12 @@ class _BacklogTabBuilder extends State<BacklogTab> {
 
   @override
   Widget build(BuildContext context) {
-    log("From ==========FutureBuilder: ${issueOfSprint.length.toString()}");
-
     return SingleChildScrollView(
       child: FutureBuilder<Map<SprintModel, List<IssueModel>>>(
         future: _listFuture,
         builder: (BuildContext context,
             AsyncSnapshot<Map<SprintModel, List<IssueModel>>> snapshot) {
           List<Widget> children;
-          log("To ==========FutureBuilder: ${issueOfSprint.length.toString()}");
           if (snapshot.hasData) {
             children = <Widget>[
               Column(

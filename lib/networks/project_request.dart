@@ -132,6 +132,7 @@ class RequestData {
       }
     });
 
+    //log("getIssueIdFromSprint ${res.length.toString()}");
     return res;
   }
 

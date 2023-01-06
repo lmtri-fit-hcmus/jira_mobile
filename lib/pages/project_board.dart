@@ -55,6 +55,7 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
   }
 
   getSprintData() async {
+    lsSprint.clear();
     for (var prj in lsPrj) {
       List<SprintModel> res =
           await RequestData.getMySprint(prj.getId!.toHexString());
@@ -220,7 +221,6 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
   }
 
   Widget buildBoardContent() {
-    log("board: userId: $userId");
     return Expanded(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -307,8 +307,6 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    log(userId);
-    // Size pSize = MediaQuery.of(context).size;
     return Container(
       decoration: const BoxDecoration(
         color: Color.fromARGB(255, 255, 255, 255),

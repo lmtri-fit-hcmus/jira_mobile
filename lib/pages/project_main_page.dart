@@ -36,7 +36,7 @@ class _ProjectMainPageWidgetState extends State<ProjectMainPageWidget> {
   static const int roadmap_view_idx = 2;
   static const int settings_view_idx = 3;
 
-  int view_idx = _ProjectMainPageWidgetState.roadmap_view_idx;
+  int view_idx = _ProjectMainPageWidgetState.board_view_idx;
   List<Epic> epics = [];
 
   // setting up popup menu button
@@ -373,8 +373,8 @@ class _ProjectMainPageWidgetState extends State<ProjectMainPageWidget> {
                   child: IndexedStack(
                     index: view_idx,
                     children: [
-                      BoardTab(userId: current_user.id!.toHexString(),), // idx = 0      BOARD VIEW HERE
-                      BacklogTab(),    // idx = 1      BACKLOG VIEW HERE
+                      BoardTab(userId: current_user.id!.toHexString()), // idx = 0      BOARD VIEW HERE
+                      BacklogTab(userId: current_user.id!.toHexString()),    // idx = 1      BACKLOG VIEW HERE
                       RoadmapViewWidget(epic_list: epics),    // idx = 2
                       SettingsViewWidget(refresh_callback: renew_project)    // idx = 3
                     ],
