@@ -14,7 +14,7 @@ class EpicPage extends StatefulWidget {
 }
 
 class _EpicPageState extends State<EpicPage> {
-  mongodb.ObjectId _epicId = mongodb.ObjectId.fromHexString("63a325b2f09342b9f7c080c8");
+  mongodb.ObjectId _epicId = mongodb.ObjectId.fromHexString("63a483eedacce779a339b1a8");
   bool _isNavigation = true;
   //name epic 
  //handle text field event
@@ -58,24 +58,25 @@ class _EpicPageState extends State<EpicPage> {
         _status = setStatus(epicData['status']);
         _startDay = epicData['start_date'];
         _endDay = epicData['due_date'];
-        Future<Map<String,dynamic>> project = MongoDatabase.getProjectMemberId(epicData['project_id']);
+        Future<Map<String,dynamic>?> project = MongoDatabase.getProjectMemberIdByEpic(epicData['project_id']);
         project.then((projectData) {
           //print("project data is ${projectData.toString()}");
+          if(projectData != null) {
+            for(int i = 0; i < projectData['members'].length; i++) {
+                _listMemberId.add(projectData['members'][i] as mongodb.ObjectId);
+            }
+            
+            MongoDatabase.getListMemberInProject(_listMemberId).then((value) {
+                //print("list member is : ${value.toString()}");
 
-          for(int i = 0; i < projectData['members'].length; i++) {
-              _listMemberId.add(projectData['members'][i] as mongodb.ObjectId);
-          }
-          
-          MongoDatabase.getListMemberInProject(_listMemberId).then((value) {
-              //print("list member is : ${value.toString()}");
-
-              for (int i = 0; i < value.length; i++){
-                _listMemberUser.add(value[i]['name']);
-                if(value[i]['_id'] == epicData['assignee']) {
-                  _assigneeName = value[i]['name'];
+                for (int i = 0; i < value.length; i++){
+                  _listMemberUser.add(value[i]['name']);
+                  if(value[i]['_id'] == epicData['assignee']) {
+                    _assigneeName = value[i]['name'];
+                  }
                 }
-              }
-          });
+            });  
+          }
         });
 
         });

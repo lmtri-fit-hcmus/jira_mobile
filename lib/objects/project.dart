@@ -1,26 +1,56 @@
-// <<<<<<< HEAD
-// import 'package:jira_mobile/objects/epic.dart';
-// import 'package:jira_mobile/objects/user.dart';
-
-// class Project {
-//   String _id;
-//   String _name;
-//   String _key;
-//   User _leader; //id of user
-//   String _avatar;
-//   DateTime _start_date;
-//   List<User> _list_member;
-//   List<Epic> _list_epic;
-//   Project(this._id, this._name, this._key, this._leader, this._avatar,
-//       this._start_date, this._list_member, this._list_epic);
-// }
-// =======
-import 'package:flutter/material.dart';
+import 'package:jira_mobile/objects/epic.dart';
+import 'package:jira_mobile/objects/user.dart';
+import 'package:mongo_dart/mongo_dart.dart';
 
 class Project {
+  ObjectId id;
   String name;
   String key;
-  // constructor
-  Project({required this.name,required this.key});
+  ObjectId leader; //id of user
+  String? avatar;
+  DateTime? start_date;
+  List<User> list_member;
+  List<Epic> list_epic;
+  Project(this.id, this.name, this.key, this.leader, this.avatar,
+      this.start_date, this.list_member, this.list_epic);
 }
-//>>>>>>> 243d4a5 (jira_huy)
+
+class ProjectModel {
+  ObjectId? _id;
+  String? name;
+  String? key;
+  String? avatar;
+  ObjectId? leader;
+  Timestamp? startDate;
+  List<dynamic>? members;
+
+  ProjectModel();
+
+  ObjectId? get getId => _id;
+
+  String? get getName => name;
+
+  String? get getKey => key;
+
+  fromJson(Map json) {
+    _id = json["_id"];
+    name = json["name"];
+    key = json["key"];
+    avatar = json["avatar"];
+    leader = json["leader"];
+    startDate = json["startDate"];
+    members = json["members"];
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      '_id': _id,
+      'name': name,
+      'key': key,
+      'avatar': avatar,
+      'leader': leader,
+      'startDate': startDate,
+      'members': members,
+    };
+  }
+}

@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:jira_mobile/custom_widgets/custom_button.dart';
-import 'package:jira_mobile/models/account_info.dart';
 import 'package:jira_mobile/networks/account_request.dart';
+import 'package:jira_mobile/objects/user.dart';
 import 'package:jira_mobile/pages/change_password_page.dart';
+import 'package:jira_mobile/pages/home_screen_page.dart';
+import 'package:jira_mobile/pages/project_main_page.dart';
 import 'package:jira_mobile/pages/signup_page.dart';
 import 'package:jira_mobile/values/share_keys.dart';
+import 'package:mongo_dart/mongo_dart.dart' as mg;
 import 'package:password_text_field/password_text_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../objects/appinfo.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -16,9 +22,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  List<AccountInfo> listAccInf = [];
+  List<User> listAccInf = [];
   fetchAccount() {
-    Future<List<AccountInfo>> res = NetworkRequest.fetchAccoutInfo();
+    Future<List<User>> res = AccountRequest.fetchAccoutInfo();
     res.then((dataFromServer) {
       setState(() {
         listAccInf = dataFromServer;
@@ -38,16 +44,23 @@ class _LoginPageState extends State<LoginPage> {
   String password = "";
   String errStr = "";
 
-  setAccountID(String _accId) async {
+
+  setProfileInfo(String _accId,String _name,String _email,String _phone,double _time_performance,String _profile_picture) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(AppKey.AccountID, _accId).then((bool success) {});
+    prefs.setString(AppKey.accountId, _accId).then((bool success) {});
+    prefs.setString(AppKey.name, _name).then((bool success) {});
+    prefs.setString(AppKey.username, userName).then((bool success) {});
+    prefs.setString(AppKey.email, _email).then((bool success) {});
+    prefs.setString(AppKey.phone, _phone).then((bool success) {});
+    prefs.setDouble(AppKey.time_performance, _time_performance).then((bool success) {});
+    prefs.setString(AppKey.profile_picture, _profile_picture).then((bool success) {});
   }
 
   @override
   Widget build(BuildContext context) {
     String invalidUsername = "Inavailable username!";
     String invalidPassword = "Password is not correct!";
-    void onFetch() {
+    Future<void> onFetch() async {
       setState(() {
         fetchAccount();
       });
@@ -143,19 +156,24 @@ class _LoginPageState extends State<LoginPage> {
                       InkWell(
                         onTap: () {
                           int i = 0;
+                          print(listAccInf.length);
                           for (; i < listAccInf.length; i++) {
-                            if (listAccInf[i].userName == userName) {
+                            print(listAccInf[i].username! +
+                                listAccInf[i].password!);
+                            if (listAccInf[i].username == userName) {
                               if (listAccInf[i].password == password) {
                                 setState(() {
                                   errStr = "";
-                                  setAccountID(listAccInf[i].accountId ?? "");
-                                  Navigator.push(
+                                  setProfileInfo(listAccInf[i].getAccountId(), listAccInf[i].name??"", listAccInf[i].email??"", listAccInf[i].phone??"", listAccInf[i].time_performance??0, listAccInf[i].profile_picture??"");
+                                  GetIt.instance<AppInfo>().current_user = User(mg.ObjectId.fromHexString(listAccInf[i].getAccountId()), "","",'', '', "","",0.0,[]);
+                                  Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              ChangePasswordPage(
-                                                onFet: onFetch,
-                                              )));
+                                          builder: (context) => HomeScreen(
+                                                userId: listAccInf[i]
+                                                    .getAccountId(),
+                                              )),
+                                      (route) => false);
                                 });
                                 break;
                               } else {

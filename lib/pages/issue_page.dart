@@ -16,7 +16,7 @@ class IssuePage extends StatefulWidget {
 }
 
 class _IssuePageState extends State<IssuePage> {
-  mongodb.ObjectId _issueId = mongodb.ObjectId.fromHexString('63a5f51144989a1167408213');
+  mongodb.ObjectId _issueId = mongodb.ObjectId.fromHexString('63b6eddc7b823f8aef2f57fd');
   bool _isNavigation = true;
   //handle text field event
   bool _isVisible = false;
@@ -54,22 +54,24 @@ class _IssuePageState extends State<IssuePage> {
                   });
                   
                   //get project_member 
-                  Future<Map<String,dynamic>> project = MongoDatabase.getProjectMemberId(epicData['project_id']);
+                  Future<Map<String,dynamic>?> project = MongoDatabase.getProjectMemberIdByEpic(epicData['project_id']);
                   project.then((projectData) {
                     //print("project data is ${projectData.toString()}");
-                    for(int i = 0; i < projectData['members'].length; i++) {
-                      _listMemberId.add(projectData['members'][i] as mongodb.ObjectId);
-                    }
-                    //get member data like name, id, phone_number,...
-                    MongoDatabase.getListMemberInProject(_listMemberId).then((value) {
-                      for (int i = 0; i < value.length; i++){
-                        _listMemberUser.add(value[i]['name']);
-                        if(value[i]['_id'] == issueData['assignee']) {
-                          _assigneeName = value[i]['name'];
-                        }
+                    if(projectData != null) {
+                      for(int i = 0; i < projectData['members'].length; i++) {
+                        _listMemberId.add(projectData['members'][i] as mongodb.ObjectId);
                       }
-                  }
-                );
+                      //get member data like name, id, phone_number,...
+                      MongoDatabase.getListMemberInProject(_listMemberId).then((value) {
+                        for (int i = 0; i < value.length; i++){
+                          _listMemberUser.add(value[i]['name']);
+                          if(value[i]['_id'] == issueData['assignee']) {
+                            _assigneeName = value[i]['name'];
+                          }
+                        }
+                    }
+                  );
+                }
               }
             );
           }
@@ -83,6 +85,27 @@ class _IssuePageState extends State<IssuePage> {
                   setState(() {
                     _sprintName = sprintData['name'];
                   });
+                  if(_listMemberId.isEmpty) {
+                    Future<Map<String,dynamic>?> project = MongoDatabase.getProjectMemberIdByEpic(sprintData['project_id']);
+                    project.then((projectData) {
+                      //print("project data is ${projectData.toString()}");
+                      if(projectData != null) {
+                        for(int i = 0; i < projectData['members'].length; i++) {
+                          _listMemberId.add(projectData['members'][i] as mongodb.ObjectId);
+                        }
+                        //get member data like name, id, phone_number,...
+                        MongoDatabase.getListMemberInProject(_listMemberId).then((value) {
+                          for (int i = 0; i < value.length; i++){
+                            _listMemberUser.add(value[i]['name']);
+                            if(value[i]['_id'] == issueData['assignee']) {
+                              _assigneeName = value[i]['name'];
+                            }
+                          }
+                      }
+                    );
+                  }
+                });                    
+                  }
                 }
               });
 
@@ -210,8 +233,9 @@ class _IssuePageState extends State<IssuePage> {
                         ),
                     ),
                   const Flexible(
+                    //show time this task done
                     child: Text(
-                      "done in 5 day and 6 hours ",
+                      "",
                       style: TextStyle(fontWeight: FontWeight.w100),
                       maxLines: 2,
                     ),
@@ -235,7 +259,7 @@ class _IssuePageState extends State<IssuePage> {
               ),
               label("Assignee"),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                
                 children: [
                   InkWell(
                     child:  Column(
