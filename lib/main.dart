@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jira_mobile/dbhelper/mongodb.dart';
+import 'package:jira_mobile/networks/project_request.dart';
 import 'package:jira_mobile/objects/appdb.dart';
 import 'package:jira_mobile/pages/change_password_page.dart';
 import 'package:jira_mobile/pages/epic_page.dart';
@@ -35,6 +36,8 @@ void main() async {
   appinfo.current_project = cur_project;
   //
   //
+
+  await RequestData.getConnection();
 
   var appdb = AppDB();
   await appdb.connect();

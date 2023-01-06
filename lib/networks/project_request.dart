@@ -10,41 +10,23 @@ class RequestData {
   static const String MONGO_URI =
       "mongodb+srv://jiraclone:group03@clonejira.yknhuht.mongodb.net/jira";
 
-  static RequestData? _instance;
-  Db? db;
+  static late Db db;
 
-  RequestData._();
-
-  factory RequestData() {
-    _instance ??= RequestData._();
-    return _instance!;
-  }
-
-  Future<Db?> getConnection() async {
-    if (db == null) {
-      try {
-        db = await Db.create(MONGO_URI);
-        await db!.open();
-        log("Connected to server!!!");
-      } catch (e) {
-        print(e);
-      }
-    }
-    return db;
+  static Future<void> getConnection() async {
+    db = await Db.create(MONGO_URI);
+    await db.open();
+    log("Connected to server!!!");
   }
 
   static Future<DbCollection> loadCollection(String collectionName) async {
-    _instance ??= await RequestData();
-    _instance!.db = await _instance!.getConnection();
-    var coll = _instance!.db!.collection(collectionName);
+    var coll = db.collection(collectionName);
     return coll;
   }
 
   static Future<List<ProjectModel>> getMyProjects(String userId) async {
-    var coll = await loadCollection('projects').then((value) => value);
+    var coll = await loadCollection('projects');
     List<ProjectModel> ls = [];
-    if(userId == "")
-      return ls;
+    if (userId == "") return ls;
     await coll.find(where).forEach(
       (element) {
         ProjectModel ref = ProjectModel();
@@ -54,7 +36,6 @@ class RequestData {
         }
       },
     );
-    print(ls.length);
     return ls;
   }
 
@@ -83,14 +64,13 @@ class RequestData {
         modify.set('status', updateValue));
   }
 
-
   static Future<List<SprintModel>> getMySprint(String projectId) async {
     List<SprintModel> ls = [];
     var coll = await loadCollection('sprints');
     await coll
         .find(where
             .eq('project_id', stringToObjId(projectId))
-            .eq('status', 'IN PROGRESS'))
+            .ne('status', 'DONE'))
         .forEach((element) {
       SprintModel ref = SprintModel();
       ref.fromJson(element);
@@ -98,6 +78,11 @@ class RequestData {
     });
 
     return ls;
+  }
+
+  static Future<void> deleteSprint(String sprintId) async {
+    var coll = await loadCollection('sprints');
+    await coll.deleteOne(where.eq('_id', stringToObjId(sprintId)));
   }
 
   static Future<List<EpicModel>> getMyEpic(String projectId) async {
