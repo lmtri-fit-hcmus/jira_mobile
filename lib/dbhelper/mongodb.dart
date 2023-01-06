@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
+import 'package:jira_mobile/objects/sprint.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
 class MongoDatabase {
@@ -71,9 +72,9 @@ class MongoDatabase {
     return user!;
   }
 //get a document in project_member collection
-  static Future<Map<String,dynamic>> getProjectMemberId(ObjectId projectId) async {
+  static Future<Map<String,dynamic>?> getProjectMemberIdByEpic(ObjectId projectId) async {
     final listMemberId = await projectCollection.findOne(where.eq('_id', projectId));
-    return listMemberId!;
+    return listMemberId;
   }
 //get list documents in user collection have the id in project_member id
   static Future<List<Map<String,dynamic>>> getListMemberInProject(List<ObjectId> memberIds) async {
@@ -107,6 +108,11 @@ class MongoDatabase {
     final sprint = await sprintCollection.findOne({"_id": sprintId});
     return sprint;
   }
+  static Future<Map<String,dynamic>?> getProjectMemberIdBySprint(ObjectId projectId) async {
+    final listMemberId = await projectCollection.findOne(where.eq('_id', projectId));
+    return listMemberId;
+  }
+
 //
   static Future<Map<String,dynamic>?> getSprintByIssueId(ObjectId issueId) async {
     var sprintIssues = await sprintIssueCollection.findOne({'issues': issueId});
