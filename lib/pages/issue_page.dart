@@ -56,7 +56,7 @@ class _IssuePageState extends State<IssuePage> {
                   //get project_member 
                   Future<Map<String,dynamic>?> project = MongoDatabase.getProjectMemberIdByEpic(epicData['project_id']);
                   project.then((projectData) {
-                    //print("project data is ${projectData.toString()}");
+                    print("project data1 is ${projectData.toString()}");
                     if(projectData != null) {
                       for(int i = 0; i < projectData['members'].length; i++) {
                         _listMemberId.add(projectData['members'][i] as mongodb.ObjectId);
@@ -76,21 +76,15 @@ class _IssuePageState extends State<IssuePage> {
                 }
               }
             );
-          }
-        }
-      );
-              //get sprint which this issue is in
+          }else {
               Future<Map<String,dynamic>?> sprint = MongoDatabase.getSprintByIssueId(issueData['_id']);
               sprint.then((sprintData) {
                 if(sprintData != null) {
                   //print("sprint data is ${sprintData.toString()}");
-                  setState(() {
-                    _sprintName = sprintData['name'];
-                  });
                   if(_listMemberId.isEmpty) {
                     Future<Map<String,dynamic>?> project = MongoDatabase.getProjectMemberIdByEpic(sprintData['project_id']);
                     project.then((projectData) {
-                      //print("project data is ${projectData.toString()}");
+                      print("project data2 is ${projectData.toString()}");
                       if(projectData != null) {
                         for(int i = 0; i < projectData['members'].length; i++) {
                           _listMemberId.add(projectData['members'][i] as mongodb.ObjectId);
@@ -110,6 +104,19 @@ class _IssuePageState extends State<IssuePage> {
                   }
                 });                    
                   }
+                }
+              });            
+          }
+        }
+      );
+              //get sprint which this issue is in
+              Future<Map<String,dynamic>?> sprint = MongoDatabase.getSprintByIssueId(issueData['_id']);
+              sprint.then((sprintData) {
+                if(sprintData != null) {
+                  //print("sprint data is ${sprintData.toString()}");
+                  setState(() {
+                    _sprintName = sprintData['name'];
+                  });
                 }
               });
 
