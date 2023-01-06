@@ -32,7 +32,6 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
   List<ProjectModel> projects = [];
 
   Future<List<ProjectModel>> loadData() async {
-    print(widget.userId);
     return await getProjectData();
   }
   
@@ -51,7 +50,6 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.userId);
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
@@ -168,20 +166,16 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
                           margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
                           // height of list view
                           height: screenHeight - 250,
-
                           child: FutureBuilder<List<ProjectModel>>(
                             future: loadData(),
                             builder: (BuildContext context, 
                                 AsyncSnapshot<List<ProjectModel>> snapshot) {
                               List<Widget> children;
-                              if (snapshot.hasData) {
-                                print('has data');
-                                projects = snapshot.data!;
-                                print(projects.length.toString() + 'huy');
+                              if (snapshot.hasData) {                                
+                                projects = snapshot.data!;                                
                                 children = buildProjectsList();
                               }
-                              else if (snapshot.hasError) {
-                                print('error data');
+                              else if (snapshot.hasError) {                                
                                 children = <Widget>[
                                   const Icon(
                                     Icons.error_outline,
@@ -194,7 +188,7 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
                                   ),
                                 ];
                               }
-                              else {print('load data');
+                              else {
                                 children = const <Widget>[
                                   SizedBox(
                                     width: 60,
