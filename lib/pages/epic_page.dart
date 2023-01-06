@@ -381,7 +381,7 @@ class _EpicPageState extends State<EpicPage> {
       setState(() {
 
         if(value == null) return;
-        String day = DateFormat('dd-MM-yyyy').format(value).toString();
+        String day = DateFormat('yyyy-MM-dd').format(value).toString();
         if(__isStartOrEnd) {
           _startDay = day;
           MongoDatabase.updateEpic(_epicId, 'start_date', _startDay);
