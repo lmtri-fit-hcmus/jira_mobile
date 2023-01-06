@@ -50,7 +50,7 @@ class IssueModel {
   fromJson(Map json) {
     _id = json["_id"];
     name = json["name"];
-    issueType = json["issueType"];
+    issueType = json["issue_type"];
     reporter = json["reporter"];
     assignee = json["assignee"];
     startDate = json["startDate"];
@@ -63,7 +63,7 @@ class IssueModel {
   Map<String, dynamic> toMap() {
     return {
       '_id': _id,
-      'issueType': issueType,
+      'issue_type': issueType,
       'reporter': reporter,
       'assignee': assignee,
       'name': name,

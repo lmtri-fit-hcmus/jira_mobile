@@ -373,7 +373,7 @@ class _ProjectMainPageWidgetState extends State<ProjectMainPageWidget> {
                   child: IndexedStack(
                     index: view_idx,
                     children: [
-                      BoardTab(), // idx = 0      BOARD VIEW HERE
+                      BoardTab(userId: current_user.id!.toHexString(),), // idx = 0      BOARD VIEW HERE
                       BacklogTab(),    // idx = 1      BACKLOG VIEW HERE
                       RoadmapViewWidget(epic_list: epics),    // idx = 2
                       SettingsViewWidget(refresh_callback: renew_project)    // idx = 3

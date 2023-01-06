@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:jira_mobile/objects/project.dart';
 import 'package:jira_mobile/objects/sprint.dart';
@@ -10,7 +12,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../values/share_keys.dart';
 
 class BoardTab extends StatefulWidget {
-  const BoardTab({super.key});
+  final String userId;
+  const BoardTab({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<BoardTab> createState() => _BoardTabBuilder();
@@ -94,16 +97,19 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
     await getIssueData();
     return await createData();
   }
+
   getAccountId() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      userId = prefs.getString(AppKey.accountId)??"";
+      userId = prefs.getString(AppKey.accountId) ?? "";
     });
   }
+
   @override
   void initState() {
     pageController = PageController(initialPage: 0);
     textController = TextEditingController();
+    userId = widget.userId;
 
     super.initState();
   }
@@ -163,12 +169,13 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
               style: const TextStyle(fontSize: 15),
             ),
             onTap: () {
-              Navigator.push(context,
-              MaterialPageRoute(
-                builder: (context) {
-                return const IssuePage();
-              },
-                settings: RouteSettings(arguments: val.getId)),
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) {
+                      return const IssuePage();
+                    },
+                    settings: RouteSettings(arguments: val.getId)),
               );
             },
           ),
@@ -213,7 +220,7 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
   }
 
   Widget buildBoardContent() {
-    print("board id: $userId");
+    log("board: userId: $userId");
     return Expanded(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -251,7 +258,7 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
                             ListView(
                               physics: const ScrollPhysics(),
                               shrinkWrap: true,
-                              children: buildListCard(index,context),
+                              children: buildListCard(index, context),
                             ),
                             TextButton.icon(
                               style: ElevatedButton.styleFrom(),
@@ -300,7 +307,7 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    print(userId);
+    log(userId);
     // Size pSize = MediaQuery.of(context).size;
     return Container(
       decoration: const BoxDecoration(

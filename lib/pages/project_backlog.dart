@@ -1,12 +1,15 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:jira_mobile/objects/project.dart';
 import 'package:jira_mobile/objects/sprint.dart';
 import 'package:jira_mobile/objects/issue.dart';
 import 'package:jira_mobile/networks/project_request.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jira_mobile/pages/issue_page.dart';
 
 import '../values/share_keys.dart';
 
+const userId = "63a185f5205dbf518ca4ab52";
 
 class BacklogTab extends StatefulWidget {
   const BacklogTab({super.key});
@@ -22,12 +25,12 @@ class _BacklogTabBuilder extends State<BacklogTab> {
     'story': const Icon(Icons.amp_stories_rounded),
     '': const Icon(Icons.assignment_ind_outlined),
   };
-  String userId = "";
-  List<String> actionForActive = ["Complete sprint", "Edit sprint"];
-  List<String> actionForInactive = ["Start sprint", "Edit sprint"];
+  List<String> actionForActive = ["Complete sprint", "Delete sprint"];
+  List<String> actionForInactive = ["Start sprint", "Delete sprint"];
 
   Map<SprintModel, List<IssueModel>> issueOfSprint =
       <SprintModel, List<IssueModel>>{};
+
   List<ProjectModel> lsPrj = [];
   List<SprintModel> lsSprint = [];
 
@@ -37,12 +40,6 @@ class _BacklogTabBuilder extends State<BacklogTab> {
     await getSprintData();
 
     return await getIssueData();
-  }
-  getAccountId() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      userId = prefs.getString(AppKey.accountId)??"";
-    });
   }
 
   getProjectData() async {
@@ -74,28 +71,49 @@ class _BacklogTabBuilder extends State<BacklogTab> {
     return tmpIssueOfSprint;
   }
 
-  List<Widget> buildListTile(List<IssueModel> value) {
+  List<Widget> buildListTile(List<IssueModel> value, BuildContext context) {
     List<Widget> res = <Widget>[];
 
     for (var val in value) {
       var type = val.issueType;
-      res.add(
-        ListTile(
-          title: Text(val.name.toString()),
-          leading: iconFor[type],
-          trailing: iconFor[""],
-          // onTap: null,
-        ),
-      );
+      res.add(ListTile(
+        title: Text(val.name.toString()),
+        leading: iconFor[type],
+        trailing: iconFor[""],
+        onTap: (() {
+          // log(val.getId!.toHexString());
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) {
+                  return const IssuePage();
+                },
+                settings: RouteSettings(arguments: val.getId)),
+          );
+        }),
+      ));
     }
 
     return res;
   }
 
-  List<Widget> buidlExpansionTile() {
+  void changeSprint(String cmd, String sprintId) {
+    if (cmd.startsWith("Complete") || cmd.startsWith("Start")) {
+      RequestData.changeStatusSprint(cmd, sprintId);
+    } else if (cmd == "Delete sprint") {
+      RequestData.deleteSprint(sprintId);
+    }
+  }
+
+  List<Widget> buildExpansionTile(BuildContext context) {
     List<Widget> res = <Widget>[];
+    _listFuture!.then((value) {
+      issueOfSprint = <SprintModel, List<IssueModel>>{};
+      issueOfSprint = value;
+    });
 
     issueOfSprint.forEach((key, value) {
+      log(key.status.toString());
       List<String> action = (key.status.toString() == "TODO")
           ? actionForInactive
           : actionForActive;
@@ -113,40 +131,48 @@ class _BacklogTabBuilder extends State<BacklogTab> {
             }).toList(),
             icon: const Icon(Icons.more_vert),
             onChanged: (value) {
-              RequestData.changeStatusSprint(
-                  value.toString(), key.getId!.toHexString());
+              changeSprint(value.toString(), key.getId!.toHexString());
+
               setState(() {
-                loadData();
+                _listFuture = null;
+                _listFuture = loadData();
               });
             },
           ),
         ),
-        children: buildListTile(value),
+        children: buildListTile(value, context),
       ));
     });
 
     return res;
   }
 
+  Future<Map<SprintModel, List<IssueModel>>>? _listFuture;
+
   @override
   void initState() {
     super.initState();
-    getAccountId();
+
+    // initial load
+    _listFuture = loadData();
   }
+
   @override
   Widget build(BuildContext context) {
+    log("From ==========FutureBuilder: ${issueOfSprint.length.toString()}");
+
     return SingleChildScrollView(
       child: FutureBuilder<Map<SprintModel, List<IssueModel>>>(
-        future: loadData(),
+        future: _listFuture,
         builder: (BuildContext context,
             AsyncSnapshot<Map<SprintModel, List<IssueModel>>> snapshot) {
           List<Widget> children;
+          log("To ==========FutureBuilder: ${issueOfSprint.length.toString()}");
           if (snapshot.hasData) {
-            issueOfSprint = snapshot.data!;
             children = <Widget>[
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: buidlExpansionTile(),
+                children: buildExpansionTile(context),
               ),
             ];
           } else if (snapshot.hasError) {
