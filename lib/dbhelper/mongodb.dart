@@ -28,9 +28,9 @@ class MongoDatabase {
     sprintCollection = db.collection('sprints');
   }
 //get a document in epic collection
-  static Future<Map<String, dynamic>> getEpic(ObjectId id) async {
+  static Future<Map<String, dynamic>?> getEpic(ObjectId id) async {
     final epicData =  await epicCollection.findOne(where.eq("_id",id));
-    return epicData!;
+    return epicData;
   }
 //get a document in epic_issue collection
   static Future<Map<String, dynamic>?> getEpicIssues(ObjectId id) async {

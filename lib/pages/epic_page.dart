@@ -49,11 +49,13 @@ class _EpicPageState extends State<EpicPage> {
   var _listMemberUser = <String>[];
   
   void _fetchData(mongodb.ObjectId id) {
-    Future<Map<String,dynamic>> epic = MongoDatabase.getEpic(id);
+    Future<Map<String,dynamic>?> epic = MongoDatabase.getEpic(id);
     epic.then((epicData) {
         setState(() {
         //print("epic data is: ${epicData.toString()}");
-
+        if(epicData != null) {
+          
+        
         _issueNameController.text = epicData['name'];
         _status = setStatus(epicData['status']);
         _startDay = epicData['start_date'];
@@ -78,7 +80,7 @@ class _EpicPageState extends State<EpicPage> {
             });  
           }
         });
-
+        }
         });
     });
 

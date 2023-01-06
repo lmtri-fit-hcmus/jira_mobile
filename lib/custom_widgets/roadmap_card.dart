@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:jira_mobile/pages/epic_page.dart';
 
 import '../objects/epic.dart';
 
@@ -18,6 +19,10 @@ class _RoadmapCardState extends State<RoadmapCard> {
       onTap: () {
         print(widget.epic.name);
         // to details page
+        Navigator.push(
+          context, 
+          MaterialPageRoute(builder: (context) => const EpicPage(),settings: RouteSettings(arguments: widget.epic.id))
+          );
       },
       child: Card(
         clipBehavior: Clip.antiAliasWithSaveLayer,
