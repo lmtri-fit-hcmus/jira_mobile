@@ -214,7 +214,8 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
                   )),
                 ])),
         ),
-        bottomNavigationBar: BottomAppBar(
+        bottomNavigationBar:
+         BottomAppBar(
             child: Container(
           decoration: BoxDecoration(
               border: Border(
@@ -231,7 +232,7 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
                     icon: Icon(
                       CommunityMaterialIcons.home_outline,
                       size: 30,
-                      color: Colors.black,
+                      color: Color(0xff99D9EA),
                     ),
                     onPressed: () {},
                   ),
@@ -239,7 +240,7 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
                       padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
                       child: Text('Home',
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Color(0xff99D9EA),
                             fontWeight: FontWeight.w500,
                           )))
                 ],

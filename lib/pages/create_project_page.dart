@@ -40,7 +40,8 @@ class _CreateProjectPage extends State<CreateProject> {
   void createProject() async {
     var name = projectName;
     var key = projectKey;
-    var avatar = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTq8lnfQkQZioZCMqDjQrRaU7r438bhXKGtgQ&usqp=CAU";
+    var avatar =
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTq8lnfQkQZioZCMqDjQrRaU7r438bhXKGtgQ&usqp=CAU";
     var leader = stringToObjId(widget.userId);
     var start_date = DateFormat('yyyy-MM-dd').format(DateTime.now());
     var members = [stringToObjId(widget.userId)];
@@ -48,20 +49,15 @@ class _CreateProjectPage extends State<CreateProject> {
     var coll = GetIt.instance<AppDB>().main_db.collection('projects');
     await coll.insertOne(<String, dynamic>{
       '_id': id,
-      'name' : name,
-      'key' : key,
-      'avatar' : avatar,
-      'leader' : leader,
-      'start_date' : start_date,
-      'members' : members
+      'name': name,
+      'key': key,
+      'avatar': avatar,
+      'leader': leader,
+      'start_date': start_date,
+      'members': members
     }).then((value) => {
-      if (value.isSuccess) {
-        print('success!')
-      }
-      else {
-        print('error!')
-      }
-    });
+          if (value.isSuccess) {print('success!')} else {print('error!')}
+        });
   }
 
   @override
@@ -85,7 +81,8 @@ class _CreateProjectPage extends State<CreateProject> {
         "Project name is empty. Please enter your project name";
     String projectKeyEmpty =
         "Project key is empty. Please enter your project key";
-
+    String projectKeyTooLong =
+        "Project key must not exceed 10 characters in length";
     // xu li create project
     void checkNewProject() {
       errStr = '';
@@ -99,6 +96,12 @@ class _CreateProjectPage extends State<CreateProject> {
       if (projectKey.isEmpty) {
         setState(() {
           errStr = projectKeyEmpty;
+        });
+        return;
+      }
+      if (projectKey.length > 10) {
+        setState(() {
+          errStr = projectKeyTooLong;
         });
         return;
       }
@@ -122,17 +125,26 @@ class _CreateProjectPage extends State<CreateProject> {
       if (i == widget.projects.length && errStr == '') {
         // add project for account (leader = accountInfo.ID) and back previous page
         createProject();
-        GetIt.instance<AppInfo>().current_project = Project(id, projectName, projectKey, stringToObjId(widget.userId)
-                  ,"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTq8lnfQkQZioZCMqDjQrRaU7r438bhXKGtgQ&usqp=CAU", null, [], []);
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ProjectMainPageWidget()));
-        // next: detail_project_page
+        GetIt.instance<AppInfo>().current_project = Project(
+            id,
+            projectName,
+            projectKey,
+            stringToObjId(widget.userId),
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTq8lnfQkQZioZCMqDjQrRaU7r438bhXKGtgQ&usqp=CAU",
+            null, [], []);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProjectMainPageWidget(),
+          ),
+        );
       }
     }
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Color(0xff99D9EA),
         elevation: 0,
         toolbarHeight: 30,
         leading: BackButton(

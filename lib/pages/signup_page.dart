@@ -261,6 +261,17 @@ class _SignupPageState extends State<SignupPage> {
                                     });
                                   } else if (checkValidAccount(
                                       _userName, _password)) {
+                                      
+                                     showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return Center(
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                        color: Colors.black,
+                                                      ),
+                                                    );
+                                                  });
                                     AccountRequest.sendAccountInfor(
                                             _userName,
                                             _password,
@@ -268,7 +279,9 @@ class _SignupPageState extends State<SignupPage> {
                                             _phone,
                                             _emails)
                                         .then((value) {
-                                      widget.onFet().then((value) {Navigator.pop(context);});
+                                      widget.onFet().then((value) {
+                                        Navigator.of(context).pop();
+                                        Navigator.pop(context);});
                                       
                                     });
                                   } else {

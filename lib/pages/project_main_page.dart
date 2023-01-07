@@ -349,7 +349,7 @@ class _ProjectMainPageWidgetState extends State<ProjectMainPageWidget> {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: Colors.cyanAccent,
+            color: Colors.black,
             size: 30
           ),
           onPressed: () {
@@ -360,7 +360,7 @@ class _ProjectMainPageWidgetState extends State<ProjectMainPageWidget> {
           current_project.name,
           style: TextStyle(
             fontFamily: 'Poppins',
-            color: Colors.cyanAccent,
+            color: Colors.black,
             fontSize: 20,
             fontWeight: FontWeight.w500,
           ),
@@ -371,7 +371,7 @@ class _ProjectMainPageWidgetState extends State<ProjectMainPageWidget> {
             child: PopupMenuButton<int>(
               icon: Icon(
                 Icons.keyboard_control,
-                color: (view_idx >= 0 && view_idx <= 2) ? Colors.cyanAccent : Colors.transparent,
+                color: (view_idx >= 0 && view_idx <= 2) ? Colors.black : Colors.transparent,
                 size: 30,
               ),
               offset: Offset(-10, 40),
