@@ -8,9 +8,13 @@ import 'package:jira_mobile/networks/project_request.dart';
 import 'package:jira_mobile/pages/issue_page.dart';
 
 class BacklogTab extends StatefulWidget {
-  final String userId;
+  final String userId, projectId;
   final int tmp;
-  const BacklogTab({Key? key, required this.userId, required this.tmp})
+  const BacklogTab(
+      {Key? key,
+      required this.userId,
+      required this.projectId,
+      required this.tmp})
       : super(key: key);
 
   @override
@@ -34,7 +38,7 @@ class _BacklogTabBuilder extends State<BacklogTab> {
   List<SprintModel> lsSprint = [];
 
   Future<Map<SprintModel, List<IssueModel>>> loadData() async {
-    await getProjectData();
+    //await getProjectData();
 
     await getSprintData();
 
@@ -46,13 +50,7 @@ class _BacklogTabBuilder extends State<BacklogTab> {
   }
 
   getSprintData() async {
-    lsSprint.clear();
-    for (var prj in lsPrj) {
-      print(prj.name);
-      List<SprintModel> res =
-          await RequestData.getMySprint(prj.getId!.toHexString());
-      lsSprint += res;
-    }
+    lsSprint = await RequestData.getMySprint(widget.projectId);
   }
 
   getIssueData() async {
