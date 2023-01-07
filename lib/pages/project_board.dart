@@ -12,8 +12,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../values/share_keys.dart';
 
 class BoardTab extends StatefulWidget {
-  final String userId;
-  const BoardTab({Key? key, required this.userId}) : super(key: key);
+  final String userId, projectId;
+  const BoardTab({Key? key, required this.userId, required this.projectId})
+      : super(key: key);
 
   @override
   State<BoardTab> createState() => _BoardTabBuilder();
@@ -55,20 +56,11 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
   }
 
   getSprintData() async {
-    lsSprint.clear();
-    for (var prj in lsPrj) {
-      List<SprintModel> res =
-          await RequestData.getMyActiveSprint(prj.getId!.toHexString());
-      lsSprint += res;
-    }
+    lsSprint = await RequestData.getMyActiveSprint(widget.projectId);
   }
 
   getEpicData() async {
-    for (var prj in lsPrj) {
-      List<EpicModel> res =
-          await RequestData.getMyEpic(prj.getId!.toHexString());
-      lsEpic += res;
-    }
+    lsEpic = await RequestData.getMyEpic(widget.projectId);
   }
 
   getIssueData() async {

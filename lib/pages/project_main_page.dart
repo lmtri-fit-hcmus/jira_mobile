@@ -340,8 +340,8 @@ class _ProjectMainPageWidgetState extends State<ProjectMainPageWidget> {
   
   @override
   Widget build(BuildContext context) {
-    print(current_user.id);
-    print(current_project.id);
+    print("Current User: ${current_user.id}");
+    print("Current Project: ${current_project.id}");
     print(epics);
     return Scaffold(
       key: scaffoldKey,
@@ -544,8 +544,8 @@ class _ProjectMainPageWidgetState extends State<ProjectMainPageWidget> {
                   child: IndexedStack(
                     index: view_idx,
                     children: [
-                      BoardTab(userId: current_user.id!.toHexString()), // idx = 0      BOARD VIEW HERE
-                      BacklogTab(userId: current_user.id!.toHexString(), tmp: tmp),    // idx = 1      BACKLOG VIEW HERE
+                      BoardTab(userId: current_user.id!.toHexString(), projectId: current_project.id.toHexString()), // idx = 0      BOARD VIEW HERE
+                      BacklogTab(userId: current_user.id!.toHexString(), projectId: current_project.id.toHexString(), tmp: tmp),    // idx = 1      BACKLOG VIEW HERE
                       RoadmapViewWidget(epic_list: epics),    // idx = 2
                       SettingsViewWidget(refresh_callback: renew_project)    // idx = 3
                     ],
