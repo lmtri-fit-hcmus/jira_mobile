@@ -22,14 +22,17 @@ class AccountRequest {
     if (db != null) db.close();
   }
 
-  static Future<bool> addMemberToProject(
+  static Future<List<ObjectId>> addMemberToProject(
       String emails, ObjectId projectId) async {
-    bool res = false;
+    ObjectId res = new ObjectId();
+    bool isCheck = false;
     var acc = await LoadServer();
     var tmp = [];
     bool check = false;
     await acc.find().forEach((element) async {
       if (element["email"] == emails) {
+        isCheck = true;
+        res = element["_id"];
         var db2 = await Db.create(server);
         await db2.open();
         var a = db.collection('projects');
@@ -47,10 +50,13 @@ class AccountRequest {
           }
         });
 
-        res = true;
       }
     });
-    return res;
+    if(isCheck){
+      return [res];
+    }
+    else return[];
+    
   }
 
   static List<User> parseAccountInfo(String responseBody) {

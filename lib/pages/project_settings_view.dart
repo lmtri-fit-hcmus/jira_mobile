@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:jira_mobile/networks/account_request.dart';
+import 'package:jira_mobile/networks/noti_request.dart';
 import 'package:jira_mobile/objects/user.dart';
 import 'package:jira_mobile/pages/project_details_page.dart';
 import 'package:jira_mobile/pages/project_features_page.dart';
+import 'package:mongo_dart/mongo_dart.dart' as md;
 
 import '../objects/appinfo.dart';
 import '../objects/project.dart';
@@ -222,10 +224,13 @@ class _SettingsViewWidgetState extends State<SettingsViewWidget> {
                                                   ),
                                                 );
                                               });
+                                          
                                           AccountRequest.addMemberToProject(
                                                   invitedEmails,
                                                   current_project.id)
                                               .then((value) {
+                                            if(value!=[])
+                                              NotiRequest.addNoti("You are invited to join ${current_project.name}", value[0] );
                                             Navigator.of(context).pop();
                                             Navigator.of(context).pop();
                                           });
