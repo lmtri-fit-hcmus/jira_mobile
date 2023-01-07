@@ -78,7 +78,7 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
 
   PageController pageController = PageController();
   TextEditingController textController = TextEditingController();
-  List<String> topic = ["TODO", "IN PROGRESS", "DONE"];
+  List<String> topic = ["TO DO", "IN PROGRESS", "DONE"];
   List<List<IssueModel>> data = [];
 
   int pageIndex = 0;
