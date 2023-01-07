@@ -6,7 +6,31 @@ import 'package:jira_mobile/epic_issue_page_component/class_status.dart';
 import 'package:flutter/material.dart';
 import 'package:jira_mobile/epic_issue_page_component/component.dart';
 
-
+Map<String,dynamic> _setIssueType(String type) {
+  Map<String, dynamic> issueType =  {
+    "type":"",
+    "icon": Icons.assignment_ind_outlined,
+    "color": const Color.fromARGB(255, 85, 77, 77)
+  };
+  switch(type) {
+    case "task": 
+    issueType["type"] = "task";
+    issueType['icon'] = (Icons.task);
+    issueType['color'] = const Color.fromARGB(255, 30, 213, 241);
+    break;
+    case "bug":
+    issueType["type"] = "bug";
+    issueType['icon'] = (Icons.bug_report);
+    issueType['color'] =const Color.fromARGB(255, 228, 49, 64);
+    break;
+    case "story":
+    issueType["type"] = "story";
+    issueType['icon'] = (Icons.amp_stories_rounded);
+    issueType['color'] = const Color.fromARGB(255, 21, 225, 52);
+    break;
+  }
+  return issueType;
+}
 
 class IssuePage extends StatefulWidget {
   const IssuePage({super.key});
@@ -26,6 +50,9 @@ class _IssuePageState extends State<IssuePage> {
   //issue status
   Status _status = Status(IssueStatusType.toDo, "TO DO",backgroundStatus[IssueStatusType.toDo]!);
 
+  //issue type
+  Map<String, dynamic> _issueType = _setIssueType("");
+
   //epic parent
   String _epicName = '';
 
@@ -43,6 +70,7 @@ class _IssuePageState extends State<IssuePage> {
       setState(() {
               _issueNameController.text = issueData['name'];
               _status = setStatus(issueData['status']);
+              _issueType = _setIssueType(issueData["issue_type"]);
               //get parent epic of this issue 
               Future<Map<String,dynamic>?> parentEpic = MongoDatabase.getParentEpic(issueData['_id']);
               parentEpic.then((epicData) {
@@ -263,7 +291,7 @@ class _IssuePageState extends State<IssuePage> {
               label("Parent issue"),
               issueType(Icons.assignment_outlined, _epicName,const  Color.fromARGB(237, 239, 19, 206)),
               label("Issue type"),
-              issueType(Icons.domain_verification, "Task",const Color.fromARGB(255, 30, 213, 241)),
+              issueType(_issueType['icon'], _issueType["type"],_issueType["color"]),
               label("Sprint"),
               Text(
               _sprintName
