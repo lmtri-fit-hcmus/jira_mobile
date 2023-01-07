@@ -6,9 +6,11 @@ import 'package:jira_mobile/custom_widgets/custom_button.dart';
 import 'package:jira_mobile/networks/project_request.dart';
 import 'package:jira_mobile/objects/project.dart';
 import 'package:jira_mobile/pages/home_screen_page.dart';
+import 'package:jira_mobile/pages/project_main_page.dart';
 import 'package:mongo_dart/mongo_dart.dart' as md;
 
 import '../objects/appdb.dart';
+import '../objects/appinfo.dart';
 
 class CreateProject extends StatefulWidget {
   // truyen vao thong tin tai khoan (de gan leader)
@@ -30,6 +32,7 @@ class _CreateProjectPage extends State<CreateProject> {
   String projectName = '';
   String projectKey = '';
   DateTime? datePicked;
+  md.ObjectId id = new md.ObjectId();
   List<ProjectModel> _projects = [];
   String errStr = '';
 
@@ -44,6 +47,7 @@ class _CreateProjectPage extends State<CreateProject> {
 
     var coll = GetIt.instance<AppDB>().main_db.collection('projects');
     await coll.insertOne(<String, dynamic>{
+      '_id': id,
       'name' : name,
       'key' : key,
       'avatar' : avatar,
@@ -118,6 +122,9 @@ class _CreateProjectPage extends State<CreateProject> {
       if (i == widget.projects.length && errStr == '') {
         // add project for account (leader = accountInfo.ID) and back previous page
         createProject();
+        GetIt.instance<AppInfo>().current_project = Project(id, projectName, projectKey, stringToObjId(widget.userId)
+                  ,"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTq8lnfQkQZioZCMqDjQrRaU7r438bhXKGtgQ&usqp=CAU", null, [], []);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ProjectMainPageWidget()));
         // next: detail_project_page
       }
     }
