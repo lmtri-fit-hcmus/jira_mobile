@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -28,6 +27,10 @@ class _ProjectMainPageWidgetState extends State<ProjectMainPageWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   User current_user = GetIt.instance<AppInfo>().current_user;
   obj.Project current_project = GetIt.instance<AppInfo>().current_project;
+  TextEditingController te1 = TextEditingController();
+  TextEditingController te2 = TextEditingController();
+  int tmp = 0;
+
 
 
   // index of the views in IndexedStack
@@ -163,6 +166,161 @@ class _ProjectMainPageWidgetState extends State<ProjectMainPageWidget> {
     return res;
   }
 
+  void createSprint() {
+    te1.clear();
+    te2.clear();
+    showDialog(context: context, builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Create new sprint'),
+        content: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            TextFormField(
+              controller: te1,
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: 'Sprint name',
+                hintStyle: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.normal,
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Color(0x00000000),
+                    width: 1,
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(4.0),
+                    topRight: Radius.circular(4.0),
+                  ),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Color(0x00000000),
+                    width: 1,
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(4.0),
+                    topRight: Radius.circular(4.0),
+                  ),
+                ),
+                errorBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Color(0x00000000),
+                    width: 1,
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(4.0),
+                    topRight: Radius.circular(4.0),
+                  ),
+                ),
+                focusedErrorBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Color(0x00000000),
+                    width: 1,
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(4.0),
+                    topRight: Radius.circular(4.0),
+                  ),
+                ),
+              ),
+            ),
+            TextFormField(
+              controller: te2,
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: 'Sprint goal',
+                hintStyle: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.normal,
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Color(0x00000000),
+                    width: 1,
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(4.0),
+                    topRight: Radius.circular(4.0),
+                  ),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Color(0x00000000),
+                    width: 1,
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(4.0),
+                    topRight: Radius.circular(4.0),
+                  ),
+                ),
+                errorBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Color(0x00000000),
+                    width: 1,
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(4.0),
+                    topRight: Radius.circular(4.0),
+                  ),
+                ),
+                focusedErrorBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Color(0x00000000),
+                    width: 1,
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(4.0),
+                    topRight: Radius.circular(4.0),
+                  ),
+                ),
+              ),
+
+            )
+          ],
+        ),
+        actions: [
+          Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(10, 5, 10, 5),
+              child: TextButton(
+                  onPressed: () async {
+                    var name = te1.text.toString();
+                    var goal = te2.text.toString();
+                    if (name.length > 0)
+                    {
+                      var coll = GetIt.instance<AppDB>().main_db.collection("sprints");
+                      await coll.insertOne(<String, dynamic> {
+                        'project_id' : current_project.id,
+                        'name' : name,
+                        'goal' : goal,
+                        'start_date': '',
+                        'due_date' : '',
+                        'status' : 'TODO'
+                      }).then((value) => {
+                        if (value.isSuccess)
+                        {
+                          setState(() {
+                            tmp = tmp + 1;
+                            current_user = GetIt.instance<AppInfo>().current_user;
+                          })
+                        }
+                        else
+                        {}
+                      });
+                    }
+                    Navigator.pop(context);
+                  },  child: Text('Create'))
+          )
+        ],
+      );
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -171,6 +329,14 @@ class _ProjectMainPageWidgetState extends State<ProjectMainPageWidget> {
       epics.add(element);
     });}));
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    te1.dispose();
+    te2.dispose();
+  }
+
   
   @override
   Widget build(BuildContext context) {
@@ -231,6 +397,11 @@ class _ProjectMainPageWidgetState extends State<ProjectMainPageWidget> {
                   case roadmap_unit_ItemValue:
                     print('switch unit');
                     break;
+                  case backlog_create_ItemValue:
+                    {
+                      createSprint();
+                      break;
+                    }
                   default:
                     break;
                 }
@@ -374,72 +545,21 @@ class _ProjectMainPageWidgetState extends State<ProjectMainPageWidget> {
                     index: view_idx,
                     children: [
                       BoardTab(userId: current_user.id!.toHexString()), // idx = 0      BOARD VIEW HERE
-                      BacklogTab(userId: current_user.id!.toHexString()),    // idx = 1      BACKLOG VIEW HERE
+                      BacklogTab(userId: current_user.id!.toHexString(), tmp: tmp),    // idx = 1      BACKLOG VIEW HERE
                       RoadmapViewWidget(epic_list: epics),    // idx = 2
                       SettingsViewWidget(refresh_callback: renew_project)    // idx = 3
                     ],
                   //),
                 ),
               ),
-              // Divider(
-              //   thickness: 1,
-              // ),
-              // Row(
-              //   mainAxisSize: MainAxisSize.max,
-              //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              //   children: [
-              //     Column(
-              //       mainAxisSize: MainAxisSize.max,
-              //       children: [
-              //         IconButton(
-              //           icon: Icon(
-              //             Icons.home,
-              //             color: Colors.black,
-              //             size: 22,
-              //           ),
-              //           onPressed: () {
-              //             print('IconButton pressed ...');
-              //           },
-              //         ),
-              //         Text(
-              //           'Home',
-              //           style: TextStyle(
-              //             fontFamily: 'Poppins',
-              //             fontWeight: FontWeight.w500,
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //     Column(
-              //       mainAxisSize: MainAxisSize.max,
-              //       children: [
-              //         IconButton(
-              //           icon: Icon(
-              //             Icons.notifications,
-              //             color: Colors.black,
-              //             size: 30,
-              //           ),
-              //           onPressed: () {
-              //             print('IconButton pressed ...');
-              //           },
-              //         ),
-              //         Text(
-              //           'Notifications',
-              //           style: TextStyle(
-              //             fontFamily: 'Poppins',
-              //             fontWeight: FontWeight.w500,
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //   ],
-              // ),
             ],
           ),
         ),
       ),
     );
   }
+
+
 
 
 }
