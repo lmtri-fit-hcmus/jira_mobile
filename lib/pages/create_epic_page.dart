@@ -35,7 +35,7 @@ class _CreateEpicPageWidgetState extends State<CreateEpicPageWidget> {
     var project = widget.current_project.id;
     var summary = textController1?.text;
     var description = textController2?.text;
-    var status = "TODO";
+    var status = "TO DO";
     var start_date = datePicked1?.toString().substring(0, 10);
     var due_date = datePicked2?.toString().substring(0, 10);
     var reporter = pickedReporter.username;

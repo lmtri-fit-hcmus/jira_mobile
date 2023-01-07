@@ -80,6 +80,22 @@ class RequestData {
     return ls;
   }
 
+  static Future<List<SprintModel>> getMyActiveSprint(String projectId) async {
+    List<SprintModel> ls = [];
+    var coll = await loadCollection('sprints');
+    await coll
+        .find(where
+            .eq('project_id', stringToObjId(projectId))
+            .eq('status', 'IN PROGRESS'))
+        .forEach((element) {
+      SprintModel ref = SprintModel();
+      ref.fromJson(element);
+      ls.add(ref);
+    });
+
+    return ls;
+  }
+
   static Future<void> deleteSprint(String sprintId) async {
     var coll = await loadCollection('sprints');
     await coll.deleteOne(where.eq('_id', stringToObjId(sprintId)));

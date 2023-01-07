@@ -34,7 +34,7 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
     List<IssueModel> inpr = [];
 
     for (var s in lsIssue) {
-      if (s.status == "TODO") {
+      if (s.status == "TO DO") {
         todo.add(s);
       } else if (s.status == "DONE") {
         done.add(s);
@@ -58,7 +58,7 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
     lsSprint.clear();
     for (var prj in lsPrj) {
       List<SprintModel> res =
-          await RequestData.getMySprint(prj.getId!.toHexString());
+          await RequestData.getMyActiveSprint(prj.getId!.toHexString());
       lsSprint += res;
     }
   }
@@ -267,11 +267,12 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
                                 if (summary == null || summary.isEmpty) {
                                   return;
                                 }
-                                RequestData.addNewIssue(
+                                await RequestData.addNewIssue(
                                         summary, dropdownValue, topic[index])
                                     .then((String newIssueId) {
+                                  var curSpintId = findSprintId();
                                   RequestData.addIssueToSprint(
-                                      findSprintId(), newIssueId.toString());
+                                      curSpintId, newIssueId.toString());
                                 });
                                 setState(() {
                                   loadData();

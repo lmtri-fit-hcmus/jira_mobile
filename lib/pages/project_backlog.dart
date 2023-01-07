@@ -7,11 +7,11 @@ import 'package:jira_mobile/objects/issue.dart';
 import 'package:jira_mobile/networks/project_request.dart';
 import 'package:jira_mobile/pages/issue_page.dart';
 
-
 class BacklogTab extends StatefulWidget {
   final String userId;
   final int tmp;
-  const BacklogTab({Key? key, required this.userId, required this.tmp}) : super(key: key);
+  const BacklogTab({Key? key, required this.userId, required this.tmp})
+      : super(key: key);
 
   @override
   State<BacklogTab> createState() => _BacklogTabBuilder();
@@ -114,7 +114,7 @@ class _BacklogTabBuilder extends State<BacklogTab> {
     });
 
     issueOfSprint.forEach((key, value) {
-      List<String> action = (key.status.toString() == "TODO")
+      List<String> action = (key.status.toString() == "TO DO")
           ? actionForInactive
           : actionForActive;
       res.add(ExpansionTile(
