@@ -1,10 +1,15 @@
 import 'dart:ffi';
 
+import 'package:get_it/get_it.dart';
 import 'package:jira_mobile/dbhelper/mongodb.dart';
+import 'package:jira_mobile/networks/noti_request.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mongodb;
 import 'package:jira_mobile/epic_issue_page_component/class_status.dart';
 import 'package:flutter/material.dart';
 import 'package:jira_mobile/epic_issue_page_component/component.dart';
+
+import '../objects/appinfo.dart';
+import '../objects/user.dart';
 
 Map<String,dynamic> _setIssueType(String type) {
   Map<String, dynamic> issueType =  {
@@ -325,6 +330,8 @@ class _IssuePageState extends State<IssuePage> {
                                     style:const TextStyle(fontSize: 25)),
                                   onTap: () {
                                     setState(() {
+                                      User current_user = GetIt.instance<AppInfo>().current_user;
+                                      NotiRequest.addNoti("  You are assigned a ticket", _listMemberId[index]);
                                       _assigneeName = _listMemberUser[index];
                                       MongoDatabase.updateIssue(_issueId, 'assignee', _listMemberId[index]);
                                       Navigator.pop(context);
