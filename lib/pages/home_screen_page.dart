@@ -3,6 +3,7 @@ import 'package:community_material_icon/community_material_icon.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:footer/footer.dart';
 import 'package:get_it/get_it.dart';
+import 'package:jira_mobile/networks/noti_request.dart';
 import 'package:jira_mobile/objects/project.dart';
 import 'package:jira_mobile/pages/create_project_page.dart';
 import 'package:jira_mobile/pages/profile_page.dart';
@@ -28,13 +29,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
-
   List<ProjectModel> projects = [];
 
   Future<List<ProjectModel>> loadData() async {
     return await getProjectData();
   }
-  
+
   Future<List<ProjectModel>> getProjectData() async {
     List<ProjectModel> res = [];
     res = await RequestData.getMyProjects(widget.userId);
@@ -63,9 +63,17 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
             elevation: 5,
             child: InkWell(
                 onTap: () {
-                  GetIt.instance<AppInfo>().current_project = Project(eachProject.getId??mg.ObjectId.fromHexString(""), eachProject.name??"", eachProject.key??"", eachProject.leader??mg.ObjectId.fromHexString("")
-                  , eachProject.avatar, null, [], []);
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ProjectMainPageWidget()));    
+                  GetIt.instance<AppInfo>().current_project = Project(
+                      eachProject.getId ?? mg.ObjectId.fromHexString(""),
+                      eachProject.name ?? "",
+                      eachProject.key ?? "",
+                      eachProject.leader ?? mg.ObjectId.fromHexString(""),
+                      eachProject.avatar,
+                      null, [], []);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ProjectMainPageWidget()));
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -133,89 +141,86 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
               ),
               // profile
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
-                      
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ProfilePage()));
               },
             )
           ],
         ),
         body: SafeArea(
           child: SingleChildScrollView(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                  // account's project
-                  Container(
-                      child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.fromLTRB(15, 30, 0, 30),
-                        child: Text(
-                          "All projects",
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black,
-                          ),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                // account's project
+                Container(
+                    child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.fromLTRB(15, 30, 0, 30),
+                      child: Text(
+                        "All projects",
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black,
                         ),
                       ),
-          
-                      // show all project
-                      Container(
-                          margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                          // height of list view
-                          height: screenHeight - 250,
-                          child: FutureBuilder<List<ProjectModel>>(
-                            future: loadData(),
-                            builder: (BuildContext context, 
-                                AsyncSnapshot<List<ProjectModel>> snapshot) {
-                              List<Widget> children;
-                              if (snapshot.hasData) {                                
-                                projects = snapshot.data!;                                
-                                children = buildProjectsList();
-                              }
-                              else if (snapshot.hasError) {                                
-                                children = <Widget>[
-                                  const Icon(
-                                    Icons.error_outline,
-                                    color: Colors.red,
-                                    size: 60,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 16),
-                                    child: Text('Error: ${snapshot.error}'),
-                                  ),
-                                ];
-                              }
-                              else {
-                                children = const <Widget>[
-                                  SizedBox(
-                                    width: 60,
-                                    height: 60,
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(top: 16),
-                                    child: Text('Awaiting result...'),
-                                  ),
-                                ];
-                              }
-                              return Center(
-                                child: Column(
-                                  //mainAxisAlignment: MainAxisAlignment.center,
-                                  children: children,
-                                ),
-                              );
-                            },            
-                          ),
-                      )
-                    ],
-                  )),
-                ])),
+                    ),
+
+                    // show all project
+                    Container(
+                      margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      // height of list view
+                      height: screenHeight - 250,
+                      child: FutureBuilder<List<ProjectModel>>(
+                        future: loadData(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<List<ProjectModel>> snapshot) {
+                          List<Widget> children;
+                          if (snapshot.hasData) {
+                            projects = snapshot.data!;
+                            children = buildProjectsList();
+                          } else if (snapshot.hasError) {
+                            children = <Widget>[
+                              const Icon(
+                                Icons.error_outline,
+                                color: Colors.red,
+                                size: 60,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 16),
+                                child: Text('Error: ${snapshot.error}'),
+                              ),
+                            ];
+                          } else {
+                            children = const <Widget>[
+                              SizedBox(
+                                width: 60,
+                                height: 60,
+                                child: CircularProgressIndicator(),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 16),
+                                child: Text('Awaiting result...'),
+                              ),
+                            ];
+                          }
+                          return Center(
+                            child: Column(
+                              //mainAxisAlignment: MainAxisAlignment.center,
+                              children: children,
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  ],
+                )),
+              ])),
         ),
-        bottomNavigationBar:
-         BottomAppBar(
+        bottomNavigationBar: BottomAppBar(
             child: Container(
           decoration: BoxDecoration(
               border: Border(
@@ -256,7 +261,45 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
                       color: Colors.black,
                     ),
                     onPressed: () {
-                      // notifications_page
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.black,
+                              ),
+                            );
+                          });
+                      List<String> listNoti = [];
+                      NotiRequest.fetchNoti(
+                              mg.ObjectId.fromHexString(widget.userId))
+                          .then((value) {
+                        listNoti = List<String>.from(value);
+                        print(listNoti);
+                        Navigator.of(context).pop();
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Container(
+                                margin: EdgeInsets.only(top: 50,bottom: 50,left: 20,right: 20),
+                                child: Scaffold(
+                                    body: Container(
+                                  margin: EdgeInsets.only(
+                                      left: 10, right: 10, top: 20, bottom: 20),
+                                  color: Colors.white,
+                                  child: ListView.builder(
+                                      padding: const EdgeInsets.only(
+                                          top: 10, bottom: 10),
+                                      shrinkWrap: true,
+                                      itemCount: listNoti.length,
+                                      itemBuilder: ((context, index) {
+                                        return Line(text: listNoti[index]);
+                                      })),
+                                )),
+                              );
+                            });
+                      });
+                      ;
                     },
                   ),
                   Padding(
@@ -271,5 +314,33 @@ class _HomeScreenPage extends State<HomeScreen> with WidgetsBindingObserver {
             ],
           ),
         )));
+  }
+}
+
+class Line extends StatelessWidget {
+  final String text;
+  const Line({super.key, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(left: 20),
+      height: 60,
+      child: Container(
+        margin: EdgeInsets.only(right: 30),
+        child: Row(
+          children: [
+            Icon(
+              Icons.notifications,
+              size: 40,
+            ),
+            Text(
+              "  ${this.text}",
+              style: TextStyle(fontSize: 15),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
