@@ -145,13 +145,17 @@ class _SettingsViewWidgetState extends State<SettingsViewWidget> {
                           children: [
                             Container(
                               margin: EdgeInsets.only(top: 50),
-                              child: Text("Add a member to project"),
+                              child: Text(
+                                "Add a member to project",
+                                style: TextStyle(fontSize: 20),
+                              ),
                             ),
                             Container(
                               padding: EdgeInsets.all(8.0),
                               margin: EdgeInsets.only(
                                   top: 30, left: 20, right: 20, bottom: 20),
                               decoration: BoxDecoration(
+                                
                                   border: Border(
                                 bottom: BorderSide(color: Colors.grey.shade400),
                                 left: BorderSide(color: Colors.grey.shade400),
@@ -177,71 +181,78 @@ class _SettingsViewWidgetState extends State<SettingsViewWidget> {
                                   children: [
                                     Expanded(
                                       flex: 1,
-                                      child: Container(
-                                          alignment: Alignment.center,
-                                          margin: EdgeInsets.only(
-                                              top: 20, left: 20, right: 20),
-                                          decoration: BoxDecoration(
-                                              border: Border(
-                                            bottom: BorderSide(
-                                                color: Colors.grey.shade400),
-                                            left: BorderSide(
-                                                color: Colors.grey.shade400),
-                                            right: BorderSide(
-                                                color: Colors.grey.shade400),
-                                            top: BorderSide(
-                                                color: Colors.grey.shade400),
-                                          )),
-                                          width: 100,
-                                          height: 50,
-                                          child: InkWell(
-                                            onTap: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: Text("Cancel"),
-                                          )),
+                                      child: InkWell(
+                                        onTap: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Container(
+                                            alignment: Alignment.center,
+                                            margin: EdgeInsets.only(
+                                                top: 20, left: 20, right: 20),
+                                            decoration: BoxDecoration(
+                                              color: Color.fromARGB(255, 197, 157, 154),
+                                                border: Border(
+                                              bottom: BorderSide(
+                                                  color: Colors.grey.shade400),
+                                              left: BorderSide(
+                                                  color: Colors.grey.shade400),
+                                              right: BorderSide(
+                                                  color: Colors.grey.shade400),
+                                              top: BorderSide(
+                                                  color: Colors.grey.shade400),
+                                            )),
+                                            width: 100,
+                                            height: 50,
+                                            child: Container(
+                                              child: Text("Cancel"),
+                                            )),
+                                      ),
                                     ),
                                     Expanded(
                                       flex: 1,
-                                      child: Container(
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                              border: Border(
-                                            bottom: BorderSide(
-                                                color: Colors.grey.shade400),
-                                            left: BorderSide(
-                                                color: Colors.grey.shade400),
-                                            right: BorderSide(
-                                                color: Colors.grey.shade400),
-                                            top: BorderSide(
-                                                color: Colors.grey.shade400),
-                                          )),
-                                          margin: EdgeInsets.only(
-                                              top: 20, left: 20, right: 20),
-                                          width: 100,
-                                          height: 50,
-                                          child: InkWell(
-                                            onTap: () {
-                                              showDialog(
-                                                  context: context,
-                                                  builder: (context) {
-                                                    return Center(
-                                                      child:
-                                                          CircularProgressIndicator(
-                                                        color: Colors.black,
-                                                      ),
-                                                    );
-                                                  });
-                                              AccountRequest.addMemberToProject(
-                                                      invitedEmails,
-                                                      current_project.id)
-                                                  .then((value) {
-                                                Navigator.of(context).pop();
-                                                Navigator.of(context).pop();
+                                      child: InkWell(
+                                        onTap: () {
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    color: Colors.black,
+                                                  ),
+                                                );
                                               });
-                                            },
-                                            child: Text('Done'),
-                                          )),
+                                          AccountRequest.addMemberToProject(
+                                                  invitedEmails,
+                                                  current_project.id)
+                                              .then((value) {
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                          });
+                                        },
+                                        child: Container(
+                                            
+                                            alignment: Alignment.center,
+                                            margin: EdgeInsets.only(
+                                                top: 20, left: 20, right: 20),
+                                            decoration: BoxDecoration(
+                                              color: Colors.green,
+                                                border: Border(
+                                              bottom: BorderSide(
+                                                  color: Colors.grey.shade400),
+                                              left: BorderSide(
+                                                  color: Colors.grey.shade400),
+                                              right: BorderSide(
+                                                  color: Colors.grey.shade400),
+                                              top: BorderSide(
+                                                  color: Colors.grey.shade400),
+                                            )),
+                                            width: 100,
+                                            height: 50,
+                                            child: Container(
+                                              child: Text("OK"),
+                                            )),
+                                      ),
                                     )
                                   ],
                                 ))

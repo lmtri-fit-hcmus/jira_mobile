@@ -25,7 +25,7 @@ class _ProjectFeaturesPageWidgetState extends State<ProjectFeaturesPageWidget> {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: Colors.cyanAccent,
+            color: Colors.black,
             size: 30,
           ),
           onPressed: () {
@@ -36,7 +36,7 @@ class _ProjectFeaturesPageWidgetState extends State<ProjectFeaturesPageWidget> {
           'Features',
           style: TextStyle(
             fontFamily: 'Poppins',
-            color: Colors.cyanAccent,
+            color: Colors.black,
             fontSize: 20,
             fontWeight: FontWeight.w500,
           ),

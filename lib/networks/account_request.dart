@@ -111,7 +111,7 @@ class AccountRequest {
       String id, String newPass, List<User> list) async {
     var acc = await LoadServer();
     await acc.updateOne(
-        where.eq('accountId', id), modify.set('password', newPass));
+        where.eq('_id',ObjectId.fromHexString(id)), modify.set('password', newPass));
     closeDB();
   }
 }

@@ -38,7 +38,7 @@ class _ProjectDetailsPageWidgetState extends State<ProjectDetailsPageWidget> {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: Colors.cyanAccent,
+            color: Colors.black,
             size: 30,
           ),
           onPressed: () {
@@ -49,7 +49,7 @@ class _ProjectDetailsPageWidgetState extends State<ProjectDetailsPageWidget> {
           'Project details',
           style: TextStyle(
             fontFamily: 'Poppins',
-            color: Colors.cyanAccent,
+            color: Colors.black,
             fontSize: 20,
             fontWeight: FontWeight.w500,
           ),

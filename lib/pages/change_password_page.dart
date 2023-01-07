@@ -87,7 +87,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-             
               selfDefine_TextInput(
                 title: "Current password",
                 setText: setCurPas,
@@ -96,7 +95,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 height: 20,
               ),
               selfDefine_TextInput(title: "New password", setText: setNewPas),
-               SizedBox(
+              SizedBox(
                 height: 20,
               ),
               selfDefine_TextInput(
@@ -111,9 +110,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(left: 30,right: 30),
+                margin: EdgeInsets.only(left: 30, right: 30),
                 child: InkWell(
-                  
                   onTap: () {
                     print("cur $currentPass");
                     print("new $newPass");
@@ -141,10 +139,20 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                             setState(() {
                               errType = 4; //change success!
                             });
-
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      color: Colors.black,
+                                    ),
+                                  );
+                                });
                             AccountRequest.changePasswordRequest(
                                     accountId ?? "", newPass, dataFromServer)
                                 .then((value) {
+                              print("Change password successfuly!");
+                              Navigator.of(context).pop();
                               Navigator.pop(context);
                             });
                           }

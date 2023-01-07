@@ -26,7 +26,7 @@ class _CreateEpicPageWidgetState extends State<CreateEpicPageWidget> {
   TextEditingController? textController1;
   TextEditingController? textController2;
   DateTime? datePicked2;
-  late List<User> member_list;
+  late List<User> member_list = [];
   User? pickedAssignee;
   late User pickedReporter;
   final scaffoldKey = GlobalKey<ScaffoldState>();
