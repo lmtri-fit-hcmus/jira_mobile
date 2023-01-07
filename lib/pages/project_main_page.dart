@@ -300,7 +300,7 @@ class _ProjectMainPageWidgetState extends State<ProjectMainPageWidget> {
                         'goal' : goal,
                         'start_date': '',
                         'due_date' : '',
-                        'status' : 'TODO'
+                        'status' : 'TO DO'
                       }).then((value) => {
                         if (value.isSuccess)
                         {
