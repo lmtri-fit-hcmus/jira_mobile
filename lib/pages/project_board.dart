@@ -255,20 +255,22 @@ class _BoardTabBuilder extends State<BoardTab> with TickerProviderStateMixin {
                             TextButton.icon(
                               style: ElevatedButton.styleFrom(),
                               onPressed: () async {
-                                final summary = await openDialog();
-                                if (summary == null || summary.isEmpty) {
-                                  return;
+                                if (lsSprint.isNotEmpty) {
+                                  final summary = await openDialog();
+                                  if (summary == null || summary.isEmpty) {
+                                    return;
+                                  }
+                                  await RequestData.addNewIssue(
+                                          summary, dropdownValue, topic[index])
+                                      .then((String newIssueId) {
+                                    var curSpintId = findSprintId();
+                                    RequestData.addIssueToSprint(
+                                        curSpintId, newIssueId.toString());
+                                  });
+                                  setState(() {
+                                    loadData();
+                                  });
                                 }
-                                await RequestData.addNewIssue(
-                                        summary, dropdownValue, topic[index])
-                                    .then((String newIssueId) {
-                                  var curSpintId = findSprintId();
-                                  RequestData.addIssueToSprint(
-                                      curSpintId, newIssueId.toString());
-                                });
-                                setState(() {
-                                  loadData();
-                                });
                               },
                               icon: const Icon(
                                 Icons.add,
