@@ -302,15 +302,12 @@ class _ProjectMainPageWidgetState extends State<ProjectMainPageWidget> {
                         'due_date' : '',
                         'status' : 'TO DO'
                       }).then((value) => {
-                        if (value.isSuccess)
-                        {
-                          setState(() {
-                            tmp = tmp + 1;
-                            current_user = GetIt.instance<AppInfo>().current_user;
+                        if (value.isSuccess) {
+                          GetIt.instance<AppDB>().main_db.collection('sprint_issue').insertOne(<String, dynamic> {
+                            'sprint_id' : value.id,
+                            'issues' : []
                           })
                         }
-                        else
-                        {}
                       });
                     }
                     Navigator.pop(context);
